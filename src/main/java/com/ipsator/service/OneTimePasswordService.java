@@ -9,20 +9,48 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
+import com.ipsator.Entity.User;
 import com.ipsator.Repository.OneTimePasswordRepository;
+import com.ipsator.Repository.UserRepo;
 
 @Service
 public class OneTimePasswordService {
 	 private  OneTimePasswordRepository otpRepository;
 	    private  JavaMailSender mailSender;
+	    private UserRepo userRepo;
 
 	    @Autowired
-	    public OneTimePasswordService(OneTimePasswordRepository otpRepository, JavaMailSender mailSender) {
+	    public OneTimePasswordService(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
 	        this.otpRepository = otpRepository;
 	        this.mailSender = mailSender;
+	        this.userRepo=userRepo;
 	    }
 
 	    public OneTimePassword generateOTP(String email) {
+	    	
+	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);
+	    	
+	    	/**
+	    	 * Here user has not sign up and trying to generate otp
+	    	 */
+	    	if(temporaryUser==null) {
+	    		throw new RuntimeException("Please sign up first");
+	    	}
+	    	/**
+	    	 * Here we are handling following scenario
+	    	 * 1. sign up + maximum otp limit exceed
+	    	 * 2. sign up + maximum otp limit not exceed
+	    	 */
+	    	if(temporaryUser!=null && temporaryUser.getLockoutEndTime() != null) {
+	    		LocalDateTime currentTime= LocalDateTime.now();
+	    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
+	    		if(currentTime.isBefore(lockOutEndTime)) {
+	    			throw new RuntimeException("Please try after sometime");
+	    		}else {
+	    			temporaryUser.setOtpAttempts(0);
+	    			temporaryUser.setLockoutEndTime(null);
+	    		}
+	    	}
 	        // Generate a random 6-digit OTP
 	        String otp = String.format("%06d", new Random().nextInt(1000000));
 
@@ -30,16 +58,16 @@ public class OneTimePasswordService {
 	        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
 
 	        // Save the OTP in the database
-	        OneTimePassword otpEntity = new OneTimePassword();
-	        otpEntity.setEmail(email);
-	        otpEntity.setOtp(otp);
-	        otpEntity.setExpirationTime(expirationTime);
-	        otpRepository.save(otpEntity);
+	        
+	    
+	        temporaryUser.setOtp(otp);
+	        temporaryUser.setExpirationTime(expirationTime);
+	        otpRepository.save(temporaryUser);
 
 	        // Send the OTP via email
 	        sendOtpByEmail(email, otp);
 
-	        return otpEntity;
+	        return temporaryUser;
 	    }
 
 	    private void sendOtpByEmail(String email, String otp) {

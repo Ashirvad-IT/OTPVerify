@@ -31,4 +31,8 @@ public class User {
 	@NotNull
 	private String lastName;
 	
+	private int age;
+	
+	private String gender;
+	
 }

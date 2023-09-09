@@ -23,7 +23,10 @@ public class OneTimePassword {
     private String email;
     private String otp;
     private String firstName;
-    private String lastname;
+    private String lastName;
+    private int age;
+    private String gender;
     private LocalDateTime expirationTime;
-
+    private int otpAttempts;
+    private LocalDateTime lockoutEndTime;
 }

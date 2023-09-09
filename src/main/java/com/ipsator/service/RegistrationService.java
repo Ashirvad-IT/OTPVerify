@@ -41,12 +41,13 @@ public class RegistrationService {
             throw new RuntimeException("Email already registered");
         }
 
-        OneTimePassword temporaryDetails= new OneTimePassword();
-        temporaryDetails.setFirstName(user.getFirstName());
-        temporaryDetails.setLastname(user.getLastName());
-        temporaryDetails.setEmail(user.getEmail());
-        
-        otpRepository.save(temporaryDetails);
+        OneTimePassword userDetails= new OneTimePassword();
+        userDetails.setFirstName(user.getFirstName());
+        userDetails.setLastName(user.getLastName());
+        userDetails.setEmail(user.getEmail());
+        userDetails.setAge(user.getAge());
+        userDetails.setGender(user.getGender());
+        otpRepository.save(userDetails);
         return "Sign up sucessfully";
     }
 }
