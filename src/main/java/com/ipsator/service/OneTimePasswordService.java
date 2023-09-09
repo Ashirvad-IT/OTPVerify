@@ -37,9 +37,8 @@ public class OneTimePasswordService {
 	    		throw new RuntimeException("Please sign up first");
 	    	}
 	    	/**
-	    	 * Here we are handling following scenario
-	    	 * 1. sign up + maximum otp limit exceed
-	    	 * 2. sign up + maximum otp limit not exceed
+	    	 * Here we are checking i.e user enter the otp before the expiry time
+	    	 * otherwise he will get an exception
 	    	 */
 	    	if(temporaryUser!=null && temporaryUser.getLockoutEndTime() != null) {
 	    		LocalDateTime currentTime= LocalDateTime.now();
