@@ -22,6 +22,8 @@ public class OneTimePassword {
 
     private String email;
     private String otp;
+    private String firstName;
+    private String lastname;
     private LocalDateTime expirationTime;
 
 }
