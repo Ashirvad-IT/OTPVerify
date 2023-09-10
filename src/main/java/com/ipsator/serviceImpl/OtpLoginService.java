@@ -1,9 +1,10 @@
-package com.ipsator.service;
+package com.ipsator.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
+import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
 
@@ -21,7 +22,7 @@ public class OtpLoginService {
         this.userRepository = userRepository;
     }
 
-    public User loginWithOtp(String email, String otp) {
+    public UserDetails loginWithOtp(String email, String otp) {
     	//If user is already login
     	User user= userRepository.findByEmail(email);
     	if(user!=null) {
@@ -72,7 +73,10 @@ public class OtpLoginService {
         newUser.setGender(temporaryUser.getGender());
         newUser.setLastName(temporaryUser.getLastName());
         otpRepository.delete(temporaryUser);
-        return userRepository.save(newUser);
+        
+        UserDetails userDetails= new UserDetails(temporaryUser.getEmail(),temporaryUser.getFirstName(),temporaryUser.getLastName(),temporaryUser.getAge(),temporaryUser.getGender());;
+        userRepository.save(newUser);
+        return userDetails;
         
     }
 }

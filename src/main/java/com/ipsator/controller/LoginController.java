@@ -2,7 +2,9 @@ package com.ipsator.controller;
 
 
 import com.ipsator.Entity.User;
-import com.ipsator.service.OtpLoginService;
+import com.ipsator.Record.UserDetails;
+import com.ipsator.serviceImpl.OtpLoginService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +26,9 @@ public class LoginController {
     }
 
     @GetMapping("/otp")
-    public ResponseEntity<User> loginWithOtp(@RequestParam String email, @RequestParam String otp) {
+    public ResponseEntity<UserDetails> loginWithOtp(@RequestParam String email, @RequestParam String otp) {
         // Call the OTP login service to validate the OTP and perform login
-        User loginResult = otpLoginService.loginWithOtp(email, otp);
+        UserDetails loginResult = otpLoginService.loginWithOtp(email, otp);
 
         // If login is successful, I will generate a JWT token here if needed
 

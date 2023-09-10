@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.User;
-import com.ipsator.service.RegistrationService;
+import com.ipsator.serviceImpl.RegistrationService;
 
 import jakarta.validation.Valid;
 

@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.OneTimePassword;
-import com.ipsator.service.OneTimePasswordService;
+import com.ipsator.Record.OtpDetails;
+import com.ipsator.serviceImpl.OneTimePasswordService;
 
 @RestController
 public class OneTimePasswordController {
@@ -21,7 +22,7 @@ public class OneTimePasswordController {
     }
 
     @PostMapping("/api/generate-otp")
-    public ResponseEntity<OneTimePassword> generateOTP(@RequestParam String email) {
+    public ResponseEntity<OtpDetails> generateOTP(@RequestParam String email) {
         return new ResponseEntity(otpService.generateOTP(email),HttpStatus.OK);
     }
 }

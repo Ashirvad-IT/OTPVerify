@@ -1,4 +1,4 @@
-package com.ipsator.service;
+package com.ipsator.serviceImpl;
 
 import javax.management.RuntimeErrorException;
 

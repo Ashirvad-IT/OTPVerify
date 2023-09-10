@@ -1,4 +1,4 @@
-package com.ipsator.service;
+package com.ipsator.serviceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
+import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
 
@@ -26,7 +27,7 @@ public class OneTimePasswordService {
 	        this.userRepo=userRepo;
 	    }
 
-	    public OneTimePassword generateOTP(String email) {
+	    public OtpDetails generateOTP(String email) {
 	    	
 	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);
 	    	
@@ -65,8 +66,8 @@ public class OneTimePasswordService {
 
 	        // Send the OTP via email
 	        sendOtpByEmail(email, otp);
-
-	        return temporaryUser;
+	        OtpDetails otpDetails= new OtpDetails(email,otp,expirationTime);
+	        return otpDetails;
 	    }
 
 	    private void sendOtpByEmail(String email, String otp) {
