@@ -22,26 +22,57 @@ public class OtpLoginService {
     }
 
     public User loginWithOtp(String email, String otp) {
-        // Retrieve the OTP record from the database
-        OneTimePassword otpRecord = otpRepository.findByEmail(email);
-
-        if (otpRecord == null || !otpRecord.getOtp().equals(otp)) {
-            throw new RuntimeException("Invalid OTP");
+    	//If user is already login
+    	User user= userRepository.findByEmail(email);
+    	if(user!=null) {
+    		new RuntimeException("You are already log in");
+    	}
+        //Retrieve the temporary user which is save in our oneTimePassword table 
+        OneTimePassword temporaryUser = otpRepository.findByEmail(email);
+        //If the user has sign up and not generated otp then we will throw Exception
+        if(temporaryUser.getOtp()==null) {
+        	throw new RuntimeException("Please first generate otp");
         }
-
+        if (temporaryUser == null || !temporaryUser.getOtp().equals(otp)) {
+        	
+        	//If the user is enters wrong otp then we will increase the otpAttempts
+            temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
+            otpRepository.save(temporaryUser);
+            if(temporaryUser.getOtpAttempts()<5) {
+            	throw new RuntimeException("Invalid otp");
+            }
+        }
+        
+        
+        //If the user has reached or exceed its otp attempts 
+        if(temporaryUser.getOtpAttempts()>=5) {
+        	//Lock the user for 3 hours because it has reach its maximum attempts
+        	LocalDateTime lockOutEndTIme=LocalDateTime.now().plusHours(3);
+        	temporaryUser.setLockoutEndTime(lockOutEndTIme);
+//        	temporaryUser.setOtpAttempts(0);
+        	otpRepository.save(temporaryUser);
+        	throw new RuntimeException("Maximum otp attempts reached.");
+        }
+        
+        
         LocalDateTime currentTime = LocalDateTime.now();
+        
         //Here we are checking our current otp is expire or not
-        if (otpRecord.getExpirationTime().isBefore(currentTime)) {
-            throw new RuntimeException("OTP has expired");
+        if (temporaryUser.getExpirationTime().isBefore(currentTime)) {       	
+            throw new RuntimeException("OTP has expired.");
         }
-
-        //The purpose of deleting the OTP (One-Time Password) record in the OtpLoginService class is to ensure
-        //that each OTP can only be used once for authentication. Once an OTP has been successfully used for login,
-        //it should be invalidated to prevent its reuse.
-        otpRepository.delete(otpRecord);
-
-        // Return a success message
-        return userRepository.findByEmail(email);
+        
+        //Here on successful login we will reset the otp and save the temporary user to our user table
+        //and delete the temporary user from one time password table
+        temporaryUser.setOtpAttempts(0);
+        User newUser= new User();
+        newUser.setAge(temporaryUser.getAge());
+        newUser.setEmail(temporaryUser.getEmail());
+        newUser.setFirstName(temporaryUser.getFirstName());
+        newUser.setGender(temporaryUser.getGender());
+        newUser.setLastName(temporaryUser.getLastName());
+        otpRepository.delete(temporaryUser);
+        return userRepository.save(newUser);
         
     }
 }

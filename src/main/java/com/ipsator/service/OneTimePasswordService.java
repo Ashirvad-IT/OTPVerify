@@ -44,7 +44,7 @@ public class OneTimePasswordService {
 	    		LocalDateTime currentTime= LocalDateTime.now();
 	    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
 	    		if(currentTime.isBefore(lockOutEndTime)) {
-	    			throw new RuntimeException("Please try after sometime");
+	    			throw new RuntimeException("Please try after "+temporaryUser.getLockoutEndTime());
 	    		}else {
 	    			temporaryUser.setOtpAttempts(0);
 	    			temporaryUser.setLockoutEndTime(null);

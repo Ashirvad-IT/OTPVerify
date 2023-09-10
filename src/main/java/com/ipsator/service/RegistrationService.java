@@ -1,5 +1,7 @@
 package com.ipsator.service;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,9 @@ public class RegistrationService {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new RuntimeException("Email already registered");
         }
-
+        if(otpRepository.findByEmail(user.getEmail())!=null) {
+        	throw new RuntimeException("You have already sign up. you are eligible to generate otp");
+        }
         OneTimePassword userDetails= new OneTimePassword();
         userDetails.setFirstName(user.getFirstName());
         userDetails.setLastName(user.getLastName());
