@@ -4,35 +4,41 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
+import com.ipsator.Exception.OneTimePasswordException;
+import com.ipsator.Exception.UserException;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.service.otpLoginService;
 
 import java.time.LocalDateTime;
 
 @Service
-public class OtpLoginService {
+public class OtpLoginServiceImpl implements otpLoginService{
 
     private final OneTimePasswordRepository otpRepository;
     private final UserRepo userRepository;
 
     @Autowired
-    public OtpLoginService(OneTimePasswordRepository otpRepository, UserRepo userRepository) {
+    public OtpLoginServiceImpl(OneTimePasswordRepository otpRepository, UserRepo userRepository) {
         this.otpRepository = otpRepository;
         this.userRepository = userRepository;
     }
 
-    public UserDetails loginWithOtp(String email, String otp) {
+    public UserDetails loginWithOtp(String email, String otp) throws Exception {
     	//If user is already login
     	User user= userRepository.findByEmail(email);
     	if(user!=null) {
-    		new RuntimeException("You are already log in");
+    		new UserException("user is already log in");
     	}
         //Retrieve the temporary user which is save in our oneTimePassword table 
         OneTimePassword temporaryUser = otpRepository.findByEmail(email);
         //If the user has sign up and not generated otp then we will throw Exception
+        if(temporaryUser==null) {
+        	throw new UserException("Please sign up first");
+        }
         if(temporaryUser.getOtp()==null) {
-        	throw new RuntimeException("Please first generate otp");
+        	throw new OneTimePasswordException("Please first generate otp");
         }
         if (temporaryUser == null || !temporaryUser.getOtp().equals(otp)) {
         	
@@ -40,7 +46,7 @@ public class OtpLoginService {
             temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
             otpRepository.save(temporaryUser);
             if(temporaryUser.getOtpAttempts()<5) {
-            	throw new RuntimeException("Invalid otp");
+            	throw new OneTimePasswordException("Invalid otp");
             }
         }
         
@@ -52,7 +58,7 @@ public class OtpLoginService {
         	temporaryUser.setLockoutEndTime(lockOutEndTIme);
 //        	temporaryUser.setOtpAttempts(0);
         	otpRepository.save(temporaryUser);
-        	throw new RuntimeException("Maximum otp attempts reached.");
+        	throw new OneTimePasswordException("Maximum otp attempts reached.");
         }
         
         
@@ -60,7 +66,7 @@ public class OtpLoginService {
         
         //Here we are checking our current otp is expire or not
         if (temporaryUser.getExpirationTime().isBefore(currentTime)) {       	
-            throw new RuntimeException("OTP has expired.");
+            throw new OneTimePasswordException("OTP has expired.");
         }
         
         //Here on successful login we will reset the otp and save the temporary user to our user table

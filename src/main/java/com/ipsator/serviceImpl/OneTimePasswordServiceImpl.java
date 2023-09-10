@@ -10,24 +10,27 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
+import com.ipsator.Exception.OneTimePasswordException;
+import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.service.oneTimePasswordService;
 
 @Service
-public class OneTimePasswordService {
+public class OneTimePasswordServiceImpl implements oneTimePasswordService {
 	 private  OneTimePasswordRepository otpRepository;
 	    private  JavaMailSender mailSender;
 	    private UserRepo userRepo;
 
 	    @Autowired
-	    public OneTimePasswordService(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
+	    public OneTimePasswordServiceImpl(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
 	        this.otpRepository = otpRepository;
 	        this.mailSender = mailSender;
 	        this.userRepo=userRepo;
 	    }
 
-	    public OtpDetails generateOTP(String email) {
+	    public OtpDetails generateOTP(String email)throws Exception {
 	    	
 	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);
 	    	
@@ -35,7 +38,7 @@ public class OneTimePasswordService {
 	    	 * Here user has not sign up and trying to generate otp
 	    	 */
 	    	if(temporaryUser==null) {
-	    		throw new RuntimeException("Please sign up first");
+	    		throw new UserException("Please sign up first");
 	    	}
 	    	/**
 	    	 * Here we are checking i.e user enter the otp before the expiry time
@@ -45,7 +48,7 @@ public class OneTimePasswordService {
 	    		LocalDateTime currentTime= LocalDateTime.now();
 	    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
 	    		if(currentTime.isBefore(lockOutEndTime)) {
-	    			throw new RuntimeException("Please try after "+temporaryUser.getLockoutEndTime());
+	    			throw new OneTimePasswordException("Please try after "+temporaryUser.getLockoutEndTime());
 	    		}else {
 	    			temporaryUser.setOtpAttempts(0);
 	    			temporaryUser.setLockoutEndTime(null);

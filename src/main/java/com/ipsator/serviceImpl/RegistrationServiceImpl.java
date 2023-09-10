@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
+import com.ipsator.Exception.UserException;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.service.RegistrationService;
 /**
  * 
  * @author Ashirvad Kumar
@@ -18,13 +20,13 @@ import com.ipsator.Repository.UserRepo;
  * that he will not able to enter the right otp.
  */
 @Service
-public class RegistrationService {
+public class RegistrationServiceImpl implements RegistrationService {
     private final UserRepo userRepository;
     
     private final OneTimePasswordRepository otpRepository;
 
     @Autowired
-    public RegistrationService(UserRepo userRepository, OneTimePasswordRepository otpRepository) {
+    public RegistrationServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository) {
         this.userRepository = userRepository;
         this.otpRepository=otpRepository;
     }
@@ -37,13 +39,13 @@ public class RegistrationService {
      *@return It will return a string if the user has successfully register
      *@throws
      */
-    public String registerUser(User user) {
+    public String registerUser(User user) throws Exception{
         // Check if the email is already registered
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email already registered");
+            throw new UserException("Email already registered");
         }
         if(otpRepository.findByEmail(user.getEmail())!=null) {
-        	throw new RuntimeException("You have already sign up. you are eligible to generate otp");
+        	throw new UserException("You have already sign up. you are eligible to generate otp");
         }
         OneTimePassword userDetails= new OneTimePassword();
         userDetails.setFirstName(user.getFirstName());

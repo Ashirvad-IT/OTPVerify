@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Record.OtpDetails;
-import com.ipsator.serviceImpl.OneTimePasswordService;
+import com.ipsator.serviceImpl.OneTimePasswordServiceImpl;
 
 @RestController
 public class OneTimePasswordController {
 
-    private final OneTimePasswordService otpService;
+    private final OneTimePasswordServiceImpl otpService;
 
     @Autowired
-    public OneTimePasswordController(OneTimePasswordService otpService) {
+    public OneTimePasswordController(OneTimePasswordServiceImpl otpService) {
         this.otpService = otpService;
     }
 
     @PostMapping("/api/generate-otp")
-    public ResponseEntity<OtpDetails> generateOTP(@RequestParam String email) {
+    public ResponseEntity<OtpDetails> generateOTP(@RequestParam String email) throws Exception {
         return new ResponseEntity(otpService.generateOTP(email),HttpStatus.OK);
     }
 }

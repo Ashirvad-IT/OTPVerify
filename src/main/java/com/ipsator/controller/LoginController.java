@@ -3,7 +3,7 @@ package com.ipsator.controller;
 
 import com.ipsator.Entity.User;
 import com.ipsator.Record.UserDetails;
-import com.ipsator.serviceImpl.OtpLoginService;
+import com.ipsator.serviceImpl.OtpLoginServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/login")
 public class LoginController {
 
-    private final OtpLoginService otpLoginService;
+    private final OtpLoginServiceImpl otpLoginService;
 
     @Autowired
-    public LoginController(OtpLoginService otpLoginService) {
+    public LoginController(OtpLoginServiceImpl otpLoginService) {
         this.otpLoginService = otpLoginService;
     }
 
     @GetMapping("/otp")
-    public ResponseEntity<UserDetails> loginWithOtp(@RequestParam String email, @RequestParam String otp) {
+    public ResponseEntity<UserDetails> loginWithOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
         // Call the OTP login service to validate the OTP and perform login
         UserDetails loginResult = otpLoginService.loginWithOtp(email, otp);
 
