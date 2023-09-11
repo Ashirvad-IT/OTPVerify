@@ -13,7 +13,11 @@ import com.ipsator.Entity.User;
 import com.ipsator.serviceImpl.RegistrationServiceImpl;
 
 import jakarta.validation.Valid;
-
+/**
+ * 
+ * @author Ashirvad Kumar
+ * @since 2023
+ */
 @RestController
 @RequestMapping("/api/register")
 public class RegistrationController {
@@ -23,7 +27,12 @@ public class RegistrationController {
     public RegistrationController(RegistrationServiceImpl registrationService) {
         this.registrationService = registrationService;
     }
-
+    /**
+     * This method is calling registerUser method from RegistrationServiceImpl class
+     * @param user
+     * @return
+     * @throws Exception
+     */
     @PostMapping
     public ResponseEntity<String> registerUser(@RequestBody @Valid User user) throws Exception {
         return new ResponseEntity(registrationService.registerUser(user),HttpStatus.CREATED);

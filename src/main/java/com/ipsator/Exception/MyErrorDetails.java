@@ -1,7 +1,12 @@
 package com.ipsator.Exception;
 
 import java.time.LocalDateTime;
-
+/**
+ * 
+ * @author Ashirvad Kumar
+ * MyErrorDetails is a user defined class which  contain attributes like timestamp, message, details.
+ * The goal of this class is to provide the details of Exception in more structure way.
+ */
 public class MyErrorDetails {
 	private LocalDateTime timestamp;
 	private String message;

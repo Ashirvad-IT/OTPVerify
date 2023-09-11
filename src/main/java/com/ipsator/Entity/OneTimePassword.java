@@ -9,7 +9,11 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/**
+ * This is OneTimePassword entity class 
+ * @author Ashirvad Kumar
+ *
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

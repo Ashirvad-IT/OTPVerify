@@ -24,7 +24,9 @@ public class OtpLoginServiceImpl implements otpLoginService{
         this.otpRepository = otpRepository;
         this.userRepository = userRepository;
     }
-
+    /**
+     * 
+     */
     public UserDetails loginWithOtp(String email, String otp) throws Exception {
     	//If user is already login
     	User user= userRepository.findByEmail(email);

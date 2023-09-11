@@ -10,7 +10,11 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/**
+ * This class is user entity
+ * @author Ashirvad Kumar
+ * 
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

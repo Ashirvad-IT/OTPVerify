@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.ipsator.Entity.User;
-
+/**
+ * 
+ * @author Ashirvad Kumar
+ * This is gobalExceptionHandler class which is responsible for handling UserException, OneTimePasswordException
+ *  if there will be other exception then Exception class will handle.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	

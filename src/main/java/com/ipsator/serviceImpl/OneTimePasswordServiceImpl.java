@@ -16,7 +16,12 @@ import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.service.oneTimePasswordService;
-
+/**
+ * 
+ * @author Ashirvad Kumar
+ * This class provide the implementation of OneTimePasswordService interface and provide the implementation to 
+ * generateOtp method
+ */
 @Service
 public class OneTimePasswordServiceImpl implements oneTimePasswordService {
 	 private  OneTimePasswordRepository otpRepository;
@@ -29,7 +34,13 @@ public class OneTimePasswordServiceImpl implements oneTimePasswordService {
 	        this.mailSender = mailSender;
 	        this.userRepo=userRepo;
 	    }
-
+    	/**
+    	 * This method is responsible to generate otp it will take email and then generate otp 
+    	 * 
+    	 * @param email It is string data type
+    	 * @return It will return OtpDetails record containing otp and expiry time of the otp 
+    	 * @throws Exception
+    	 */
 	    public OtpDetails generateOTP(String email)throws Exception {
 	    	
 	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);

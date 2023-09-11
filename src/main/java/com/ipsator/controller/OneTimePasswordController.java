@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.serviceImpl.OneTimePasswordServiceImpl;
-
+/**
+ * 
+ * @author Ashirvad Kumar
+ * This class is oneTimePassword controller
+ */
 @RestController
 public class OneTimePasswordController {
 
@@ -20,7 +24,12 @@ public class OneTimePasswordController {
     public OneTimePasswordController(OneTimePasswordServiceImpl otpService) {
         this.otpService = otpService;
     }
-
+    /**
+     * This method is calling generateOtp method which belong from OneTimePasswordServiceImpl class
+     * @param email
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/api/generate-otp")
     public ResponseEntity<OtpDetails> generateOTP(@RequestParam String email) throws Exception {
         return new ResponseEntity(otpService.generateOTP(email),HttpStatus.OK);
