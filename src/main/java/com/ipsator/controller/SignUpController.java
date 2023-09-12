@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.User;
-import com.ipsator.serviceImpl.RegistrationServiceImpl;
+import com.ipsator.serviceImpl.SignUpServiceImpl;
 
 import jakarta.validation.Valid;
 /**
@@ -20,11 +20,11 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/register")
-public class RegistrationController {
-	private final RegistrationServiceImpl registrationService;
+public class SignUpController {
+	private final SignUpServiceImpl registrationService;
 
     @Autowired
-    public RegistrationController(RegistrationServiceImpl registrationService) {
+    public SignUpController(SignUpServiceImpl registrationService) {
         this.registrationService = registrationService;
     }
     /**

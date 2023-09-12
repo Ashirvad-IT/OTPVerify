@@ -16,7 +16,7 @@ import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
-import com.ipsator.service.RegistrationService;
+import com.ipsator.service.SignUpService;
 /**
  * 
  * @author Ashirvad Kumar
@@ -26,14 +26,14 @@ import com.ipsator.service.RegistrationService;
  * that he will not able to enter the right otp.
  */
 @Service
-public class RegistrationServiceImpl implements RegistrationService {
+public class SignUpServiceImpl implements SignUpService {
     private final UserRepo userRepository;
     private  JavaMailSender mailSender;
     
     private final OneTimePasswordRepository otpRepository;
 
     @Autowired
-    public RegistrationServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository,JavaMailSender mailSender) {
+    public SignUpServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository,JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.otpRepository=otpRepository;
         this.mailSender=mailSender;

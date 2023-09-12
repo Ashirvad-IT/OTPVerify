@@ -15,7 +15,7 @@ import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
-import com.ipsator.service.VerifyOtpService;
+import com.ipsator.service.SignUpOtpVerify;
 /**
  * 
  * @author Ashirvad Kumar
@@ -23,15 +23,13 @@ import com.ipsator.service.VerifyOtpService;
  * generateOtp method
  */
 @Service
-public class VerifyOtpServiceImpl implements VerifyOtpService {
+public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	 private  OneTimePasswordRepository otpRepository;
-	    private  JavaMailSender mailSender;
 	    private UserRepo userRepo;
 
 	    @Autowired
-	    public VerifyOtpServiceImpl(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
+	    public SignUpOtpVerifyImpl(OneTimePasswordRepository otpRepository, UserRepo userRepo) {
 	        this.otpRepository = otpRepository;
-	        this.mailSender = mailSender;
 	        this.userRepo=userRepo;
 	    }
     	/**
@@ -74,6 +72,17 @@ public class VerifyOtpServiceImpl implements VerifyOtpService {
 	            	throw new OneTimePasswordException("Invalid otp");
 	            }
 	        }
+	    	
+	    	//If the user has reached or exceed its otp attempts 
+	        if(temporaryUser.getOtpAttempts()>=5) {
+	        	//Lock the user for 3 hours because it has reach its maximum attempts
+	        	LocalDateTime lockOutEndTIme=LocalDateTime.now().plusHours(3);
+	        	temporaryUser.setLockoutEndTime(lockOutEndTIme);
+//	        	temporaryUser.setOtpAttempts(0);
+	        	otpRepository.save(temporaryUser);
+	        	throw new OneTimePasswordException("Maximum otp attempts reached.");
+	        }
+	    	
 	    	if(temporaryUser.getExpirationTime()!=null && temporaryUser.getExpirationTime().isBefore(LocalDateTime.now())) {
 	    		throw new OneTimePasswordException("OTP has expired.");
 	    	}
