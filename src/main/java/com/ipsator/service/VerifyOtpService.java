@@ -7,6 +7,6 @@ import com.ipsator.Record.OtpDetails;
  * @author Ashirvad Kumar
  * This interface contain generateOtp method
  */
-public interface oneTimePasswordService {
-	public OtpDetails generateOTP(String email) throws Exception;
+public interface VerifyOtpService {
+	public String verifyOTP(String email,String otp) throws Exception;
 }

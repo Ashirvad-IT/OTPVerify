@@ -39,10 +39,8 @@ public class OtpLoginServiceImpl implements otpLoginService{
         if(temporaryUser==null) {
         	throw new UserException("Please sign up first");
         }
-        if(temporaryUser.getOtp()==null) {
-        	throw new OneTimePasswordException("Please first generate otp");
-        }
-        if (temporaryUser == null || !temporaryUser.getOtp().equals(otp)) {
+        
+        if (temporaryUser != null || !temporaryUser.getOtp().equals(otp)) {
         	
         	//If the user is enters wrong otp then we will increase the otpAttempts
             temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
@@ -70,6 +68,16 @@ public class OtpLoginServiceImpl implements otpLoginService{
         if (temporaryUser.getExpirationTime().isBefore(currentTime)) {       	
             throw new OneTimePasswordException("OTP has expired.");
         }
+        //Here we are checking user is locked or not
+        if(temporaryUser!=null && temporaryUser.getLockoutEndTime() != null) {
+    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
+    		if(currentTime.isBefore(lockOutEndTime)) {
+    			throw new OneTimePasswordException("Please try after "+temporaryUser.getLockoutEndTime());
+    		}else {
+    			temporaryUser.setOtpAttempts(0);
+    			temporaryUser.setLockoutEndTime(null);
+    		}
+    	}
         
         //Here on successful login we will reset the otp and save the temporary user to our user table
         //and delete the temporary user from one time password table
@@ -80,7 +88,6 @@ public class OtpLoginServiceImpl implements otpLoginService{
         newUser.setFirstName(temporaryUser.getFirstName());
         newUser.setGender(temporaryUser.getGender());
         newUser.setLastName(temporaryUser.getLastName());
-        otpRepository.delete(temporaryUser);
         
         UserDetails userDetails= new UserDetails(temporaryUser.getEmail(),temporaryUser.getFirstName(),temporaryUser.getLastName(),temporaryUser.getAge(),temporaryUser.getGender());;
         userRepository.save(newUser);

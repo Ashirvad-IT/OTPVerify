@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Record.OtpDetails;
-import com.ipsator.serviceImpl.OneTimePasswordServiceImpl;
+import com.ipsator.serviceImpl.VerifyOtpServiceImpl;
 /**
  * 
  * @author Ashirvad Kumar
  * This class is oneTimePassword controller
  */
 @RestController
-public class OneTimePasswordController {
+public class VerifyOTPController {
 
-    private final OneTimePasswordServiceImpl otpService;
+    private final VerifyOtpServiceImpl otpService;
 
     @Autowired
-    public OneTimePasswordController(OneTimePasswordServiceImpl otpService) {
+    public VerifyOTPController(VerifyOtpServiceImpl otpService) {
         this.otpService = otpService;
     }
     /**
@@ -30,8 +30,8 @@ public class OneTimePasswordController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/api/generate-otp")
-    public ResponseEntity<OtpDetails> generateOTP(@RequestParam String email) throws Exception {
-        return new ResponseEntity(otpService.generateOTP(email),HttpStatus.OK);
+    @PostMapping("/api/verify")
+    public ResponseEntity<String> generateOTP(@RequestParam String email, @RequestParam String otp) throws Exception {
+        return new ResponseEntity(otpService.verifyOTP(email,otp),HttpStatus.OK);
     }
 }

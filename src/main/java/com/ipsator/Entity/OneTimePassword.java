@@ -33,4 +33,6 @@ public class OneTimePassword {
     private LocalDateTime expirationTime;
     private int otpAttempts;
     private LocalDateTime lockoutEndTime;
+    private String status;
+    private LocalDateTime signUpTime;
 }

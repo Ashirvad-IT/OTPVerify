@@ -37,7 +37,7 @@ public class LoginController {
      * @return
      * @throws Exception
      */
-    @GetMapping("/otp")
+    @GetMapping()
     public ResponseEntity<UserDetails> loginWithOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
         // Call the OTP login service to validate the OTP and perform login
         UserDetails loginResult = otpLoginService.loginWithOtp(email, otp);

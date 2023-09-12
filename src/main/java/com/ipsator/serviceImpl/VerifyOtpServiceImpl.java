@@ -15,7 +15,7 @@ import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
-import com.ipsator.service.oneTimePasswordService;
+import com.ipsator.service.VerifyOtpService;
 /**
  * 
  * @author Ashirvad Kumar
@@ -23,13 +23,13 @@ import com.ipsator.service.oneTimePasswordService;
  * generateOtp method
  */
 @Service
-public class OneTimePasswordServiceImpl implements oneTimePasswordService {
+public class VerifyOtpServiceImpl implements VerifyOtpService {
 	 private  OneTimePasswordRepository otpRepository;
 	    private  JavaMailSender mailSender;
 	    private UserRepo userRepo;
 
 	    @Autowired
-	    public OneTimePasswordServiceImpl(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
+	    public VerifyOtpServiceImpl(OneTimePasswordRepository otpRepository, JavaMailSender mailSender,UserRepo userRepo) {
 	        this.otpRepository = otpRepository;
 	        this.mailSender = mailSender;
 	        this.userRepo=userRepo;
@@ -41,7 +41,7 @@ public class OneTimePasswordServiceImpl implements oneTimePasswordService {
     	 * @return It will return OtpDetails record containing otp and expiry time of the otp 
     	 * @throws Exception
     	 */
-	    public OtpDetails generateOTP(String email)throws Exception {
+	    public String verifyOTP(String email,String otp)throws Exception {
 	    	
 	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);
 	    	
@@ -65,31 +65,35 @@ public class OneTimePasswordServiceImpl implements oneTimePasswordService {
 	    			temporaryUser.setLockoutEndTime(null);
 	    		}
 	    	}
-	        // Generate a random 6-digit OTP
-	        String otp = String.format("%06d", new Random().nextInt(1000000));
-
-	        // Set OTP expiration time (e.g., 5 minutes from now)
-	        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
-
-	        // Save the OTP in the database
 	        
+	    	if (!temporaryUser.getOtp().equals(otp)) {
+	        	//If the user is enters wrong otp then we will increase the otpAttempts
+	            temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
+	            otpRepository.save(temporaryUser);
+	            if(temporaryUser.getOtpAttempts()<5) {
+	            	throw new OneTimePasswordException("Invalid otp");
+	            }
+	        }
+	    	if(temporaryUser.getExpirationTime()!=null && temporaryUser.getExpirationTime().isBefore(LocalDateTime.now())) {
+	    		throw new OneTimePasswordException("OTP has expired.");
+	    	}
+	    	temporaryUser.setExpirationTime(null);
+	    	temporaryUser.setLockoutEndTime(null);
+	    	temporaryUser.setOtpAttempts(0);
+	    	temporaryUser.setStatus("Active");
+	    	temporaryUser.setSignUpTime(LocalDateTime.now());
+	    	otpRepository.save(temporaryUser);
+	    	// saving temporary user into user table
+	    	User user= new User();
+	    	user.setId(temporaryUser.getId());
+	    	user.setAge(temporaryUser.getAge());
+	    	user.setEmail(temporaryUser.getEmail());
+	    	user.setFirstName(temporaryUser.getFirstName());
+	    	user.setLastName(temporaryUser.getLastName());
+	    	user.setGender(temporaryUser.getGender());
+	    	userRepo.save(user);
+	        return "Sign up sucessfully";
+	    }
+
 	    
-	        temporaryUser.setOtp(otp);
-	        temporaryUser.setExpirationTime(expirationTime);
-	        otpRepository.save(temporaryUser);
-
-	        // Send the OTP via email
-	        sendOtpByEmail(email, otp);
-	        OtpDetails otpDetails= new OtpDetails(email,otp,expirationTime);
-	        return otpDetails;
-	    }
-
-	    private void sendOtpByEmail(String email, String otp) {
-	        SimpleMailMessage message = new SimpleMailMessage();
-	        message.setTo(email);
-	        message.setSubject("Your OTP Code");
-	        message.setText("Your OTP code is: " + otp);
-
-	        mailSender.send(message);
-	    }
 }

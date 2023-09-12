@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@Email
 	@NotNull
 	private String email;
+	
 	
 	@NotNull
 	private String firstName;

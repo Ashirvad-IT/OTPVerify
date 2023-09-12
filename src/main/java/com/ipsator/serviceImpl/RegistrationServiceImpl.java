@@ -1,13 +1,19 @@
 package com.ipsator.serviceImpl;
 
+import java.time.LocalDateTime;
+import java.util.Random;
+
 import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
 import com.ipsator.Exception.UserException;
+import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.service.RegistrationService;
@@ -22,13 +28,15 @@ import com.ipsator.service.RegistrationService;
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
     private final UserRepo userRepository;
+    private  JavaMailSender mailSender;
     
     private final OneTimePasswordRepository otpRepository;
 
     @Autowired
-    public RegistrationServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository) {
+    public RegistrationServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository,JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.otpRepository=otpRepository;
+        this.mailSender=mailSender;
     }
     
     /**
@@ -44,16 +52,35 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new UserException("Email already registered");
         }
-        if(otpRepository.findByEmail(user.getEmail())!=null) {
-        	throw new UserException("You have already sign up. you are eligible to generate otp");
-        }
-        OneTimePassword userDetails= new OneTimePassword();
-        userDetails.setFirstName(user.getFirstName());
-        userDetails.setLastName(user.getLastName());
-        userDetails.setEmail(user.getEmail());
-        userDetails.setAge(user.getAge());
-        userDetails.setGender(user.getGender());
-        otpRepository.save(userDetails);
-        return "Sign up sucessfully";
+        // Generate a random 6-digit OTP
+        String otp = String.format("%06d", new Random().nextInt(1000000));
+
+        // Set OTP expiration time (e.g., 5 minutes from now)
+        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
+        
+
+        // Send the OTP via email
+        sendOtpByEmail(user.getEmail(), otp);
+        //saving user in OneTimePassword table
+        OneTimePassword temporaryUser= new OneTimePassword();
+        temporaryUser.setFirstName(user.getFirstName());
+        temporaryUser.setLastName(user.getLastName());
+        temporaryUser.setEmail(user.getEmail());
+        temporaryUser.setAge(user.getAge());
+        temporaryUser.setGender(user.getGender());
+        temporaryUser.setOtp(otp);
+        temporaryUser.setExpirationTime(expirationTime);
+        temporaryUser.setStatus("Pending");
+        otpRepository.save(temporaryUser);
+        OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
+        return otpDetails.toString();
+    }
+    private void sendOtpByEmail(String email, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Your OTP Code");
+        message.setText("Your OTP code is: " + otp);
+
+        mailSender.send(message);
     }
 }
