@@ -1,6 +1,8 @@
 package com.ipsator.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.management.RuntimeErrorException;
@@ -16,6 +18,7 @@ import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.SignUpService;
 /**
  * 
@@ -47,10 +50,11 @@ public class SignUpServiceImpl implements SignUpService {
      *@return It will return a string if the user has successfully register
      *@throws
      */
-    public String registerUser(User user) throws Exception{
+    public ServiceResponse<Object> registerUser(User user) throws Exception{
         // Check if the email is already registered
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new UserException("Email already registered");
+        	return new ServiceResponse<>(false,null,"Email already registered");
+            
         }
         // Generate a random 6-digit OTP
         String otp = String.format("%06d", new Random().nextInt(1000000));
@@ -73,7 +77,10 @@ public class SignUpServiceImpl implements SignUpService {
         temporaryUser.setStatus("Pending");
         otpRepository.save(temporaryUser);
         OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
-        return otpDetails.toString();
+        Map<String,String> data= new HashMap<>();
+        data.put("temporary user", otpDetails.toString());
+        return new ServiceResponse(true,data,"Verify your email");
+        
     }
     private void sendOtpByEmail(String email, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();

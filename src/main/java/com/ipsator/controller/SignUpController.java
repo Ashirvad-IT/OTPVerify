@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.User;
+import com.ipsator.payload.ApiResponse;
+import com.ipsator.payload.Error;
+import com.ipsator.payload.ServiceResponse;
 import com.ipsator.serviceImpl.SignUpServiceImpl;
 
 import jakarta.validation.Valid;
@@ -34,7 +37,12 @@ public class SignUpController {
      * @throws Exception
      */
     @PostMapping
-    public ResponseEntity<String> registerUser(@RequestBody @Valid User user) throws Exception {
-        return new ResponseEntity(registrationService.registerUser(user),HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody @Valid User user) throws Exception {
+    	ServiceResponse<Object> response= registrationService.registerUser(user);
+    	if(response.isSuccess()) {
+    		return new ResponseEntity<ApiResponse>(new ApiResponse("success", response.getData(), null),HttpStatus.OK);
+    	}
+    	else
+    	return new ResponseEntity(new ApiResponse("Error",null,new Error(response.getMessage())),HttpStatus.BAD_REQUEST);
     }
 }

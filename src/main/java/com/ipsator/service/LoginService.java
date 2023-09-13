@@ -2,11 +2,12 @@ package com.ipsator.service;
 
 import com.ipsator.Exception.OneTimePasswordException;
 import com.ipsator.Record.UserDetails;
+import com.ipsator.payload.ServiceResponse;
 /**
  * 
  * @author Ashirvad Kumar
  * This interface contain loginWithOtp method
  */
 public interface LoginService {
-	public String userLogIn(String email) throws Exception;
+	public ServiceResponse<Object> userLogIn(String email);
 }

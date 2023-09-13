@@ -3,6 +3,9 @@ package com.ipsator.controller;
 
 import com.ipsator.Entity.User;
 import com.ipsator.Record.UserDetails;
+import com.ipsator.payload.ApiResponse;
+import com.ipsator.payload.Error;
+import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LoginService;
 import com.ipsator.serviceImpl.LoginServiceImpl;
 
@@ -39,13 +42,13 @@ public class LoginController {
      * @throws Exception
      */
     @GetMapping()
-    public ResponseEntity<String> userLogIn(@RequestParam String email) throws Exception {
+    public ResponseEntity<ApiResponse> userLogIn(@RequestParam String email) throws Exception {
         // Call the OTP login service to validate the OTP and perform login
-        String loginResult = otpLoginService.userLogIn(email);
+        ServiceResponse<Object> response = otpLoginService.userLogIn(email);
 
-        // Return a success response
-        
-        return new ResponseEntity<String>(loginResult,HttpStatus.OK);
-        
+        if(response.isSuccess()) {
+        	return new ResponseEntity<>(new ApiResponse("Success",response.getData(),null),HttpStatus.OK);
+        }
+        return new ResponseEntity(new ApiResponse("Error",null,new Error(response.getMessage())),HttpStatus.BAD_REQUEST);   
     }
 }

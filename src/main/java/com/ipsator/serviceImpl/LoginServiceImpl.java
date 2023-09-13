@@ -12,9 +12,12 @@ import com.ipsator.Record.OtpDetails;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LoginService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -33,17 +36,17 @@ public class LoginServiceImpl implements LoginService{
     /**
      * 
      */
-    public String userLogIn(String email) throws Exception {
+    public ServiceResponse<Object> userLogIn(String email) {
     	//If user is already login
     	User user= userRepository.findByEmail(email);
     	if(user!=null) {
-    		new UserException("user is already log in");
+    		return new ServiceResponse<Object>(false, null, "User is already log in");
     	}
         //Retrieve the temporary user which is save in our oneTimePassword table 
         OneTimePassword temporaryUser = otpRepository.findByEmail(email);
         //If the user has sign up and not generated otp then we will throw Exception
         if(temporaryUser==null) {
-        	throw new UserException("Please sign up first");
+        	return new ServiceResponse<Object>(false, null, "Please sign up first");
         }
         
         // Generate a random 6-digit OTP
@@ -60,8 +63,9 @@ public class LoginServiceImpl implements LoginService{
         OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
         
         sendOtpByEmail(email, otp);
-        
-        return otpDetails.toString();
+        Map<String,String> data= new HashMap();
+        data.put("Result", otpDetails.toString());
+        return new ServiceResponse<Object>(true, data, "Otp send on your email");
         
     }
     

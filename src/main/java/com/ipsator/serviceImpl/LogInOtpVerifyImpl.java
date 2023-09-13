@@ -1,6 +1,8 @@
 package com.ipsator.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import com.ipsator.Exception.UserException;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;
+import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LogInOtpVerify;
 
 @Service
@@ -28,18 +31,20 @@ public class LogInOtpVerifyImpl implements LogInOtpVerify{
 	}
 
 	@Override
-	public String otpVerify(String email, String otp) throws Exception{
+	public ServiceResponse<Object> otpVerify(String email, String otp){
 		
 		OneTimePassword temporaryUser= otpRepository.findByEmail(email);
 		
 		if(temporaryUser==null) {
-    		throw new UserException("Please sign up first");
+    		ServiceResponse<Object> response= new ServiceResponse<>(false,null,"Please, sign up first");
+    		return response;
     	}
 		if(temporaryUser!=null && temporaryUser.getLockoutEndTime() != null) {
     		LocalDateTime currentTime= LocalDateTime.now();
     		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
     		if(currentTime.isBefore(lockOutEndTime)) {
-    			throw new OneTimePasswordException("Please try after "+temporaryUser.getLockoutEndTime());
+    			ServiceResponse<Object> response=new ServiceResponse<>(false,null,"Please try after "+temporaryUser.getLockoutEndTime());;
+    			return response;
     		}else {
     			temporaryUser.setOtpAttempts(0);
     			temporaryUser.setLockoutEndTime(null);
@@ -51,7 +56,8 @@ public class LogInOtpVerifyImpl implements LogInOtpVerify{
             temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
             otpRepository.save(temporaryUser);
             if(temporaryUser.getOtpAttempts()<5) {
-            	throw new OneTimePasswordException("Invalid otp");
+            	ServiceResponse<Object> response= new ServiceResponse<>(false,null,"Invalid Otp");
+            	return response;
             }
         }
     	
@@ -62,16 +68,20 @@ public class LogInOtpVerifyImpl implements LogInOtpVerify{
         	temporaryUser.setLockoutEndTime(lockOutEndTIme);
 //        	temporaryUser.setOtpAttempts(0);
         	otpRepository.save(temporaryUser);
-        	throw new OneTimePasswordException("Maximum otp attempts reached.");
+        	ServiceResponse<Object> response= new ServiceResponse<>(false,null,"Maximum Otp attempt reached.");
+        	return response;
         }
     	
     	if(temporaryUser.getExpirationTime()!=null && temporaryUser.getExpirationTime().isBefore(LocalDateTime.now())) {
-    		throw new OneTimePasswordException("OTP has expired.");
+    		ServiceResponse<Object> response= new ServiceResponse<>(false,null,"Otp has expire");
+    		return response;
     	}
     	//Find the details of user
     	User user= userRepository.findByEmail(email);
-    	UserDetails userDetails= new UserDetails(user.getEmail(), user.getFirstName(), user.getLastName(), user.getAge(), user.getGender());
-		return userDetails.toString();
+    	Map<String,User> data= new HashMap<>();
+    	data.put("user", user);
+    	ServiceResponse<Object> response= new ServiceResponse<>(true,data,"Log in successful");
+    	return response;
 	}
 
 }
