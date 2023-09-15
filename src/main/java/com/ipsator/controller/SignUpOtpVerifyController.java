@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ipsator.Entity.OneTimePassword;
+import com.ipsator.Entity.User;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
@@ -38,7 +39,7 @@ public class SignUpOtpVerifyController {
      */
     @PostMapping("/otp")
     public ResponseEntity<ApiResponse> verifyOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
-    	ServiceResponse<Object> response= otpService.verifyOTP(email,otp);
+    	ServiceResponse<User> response= otpService.verifyOTP(email,otp);
     	if(response.isSuccess()) {
     		return new ResponseEntity<ApiResponse>(new ApiResponse("Success",response.getData(),null),HttpStatus.CREATED);
     	}

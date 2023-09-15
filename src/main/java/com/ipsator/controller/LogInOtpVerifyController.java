@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ipsator.Entity.User;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
@@ -22,7 +23,7 @@ public class LogInOtpVerifyController {
 	}
 	@GetMapping("/otp")
 	public ResponseEntity<ApiResponse> logInOtpVerify(@RequestParam String email,@RequestParam String otp){
-		ServiceResponse<Object> response= logInOtpVerification.otpVerify(email, otp);
+		ServiceResponse<User> response= logInOtpVerification.otpVerify(email, otp);
 		if(response.isSuccess()) {
 			return new ResponseEntity(new ApiResponse("success", response.getData(), null),HttpStatus.OK);
 		}

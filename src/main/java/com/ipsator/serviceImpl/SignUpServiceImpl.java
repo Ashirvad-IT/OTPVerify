@@ -50,7 +50,7 @@ public class SignUpServiceImpl implements SignUpService {
      *@return It will return a string if the user has successfully register
      *@throws
      */
-    public ServiceResponse<Object> registerUser(User user) throws Exception{
+    public ServiceResponse<OtpDetails> registerUser(User user) throws Exception{
         // Check if the email is already registered
         if (userRepository.findByEmail(user.getEmail()) != null) {
         	return new ServiceResponse<>(false,null,"Email already registered");
@@ -74,12 +74,9 @@ public class SignUpServiceImpl implements SignUpService {
         temporaryUser.setGender(user.getGender());
         temporaryUser.setOtp(otp);
         temporaryUser.setExpirationTime(expirationTime);
-        temporaryUser.setStatus("Pending");
         otpRepository.save(temporaryUser);
         OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
-        Map<String,String> data= new HashMap<>();
-        data.put("temporary user", otpDetails.toString());
-        return new ServiceResponse(true,data,"Verify your email");
+        return new ServiceResponse(true,otpDetails,"Verify your email");
         
     }
     private void sendOtpByEmail(String email, String otp) {

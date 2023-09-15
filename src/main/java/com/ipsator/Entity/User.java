@@ -39,4 +39,7 @@ public class User {
 	
 	private String gender;
 	
+	//created date
+	//updated date
+	
 }

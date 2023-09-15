@@ -36,17 +36,15 @@ public class LoginServiceImpl implements LoginService{
     /**
      * 
      */
-    public ServiceResponse<Object> userLogIn(String email) {
+    public ServiceResponse<OtpDetails> userLogIn(String email) {
     	//If user is already login
     	User user= userRepository.findByEmail(email);
-    	if(user!=null) {
-    		return new ServiceResponse<Object>(false, null, "User is already log in");
-    	}
+    	
         //Retrieve the temporary user which is save in our oneTimePassword table 
         OneTimePassword temporaryUser = otpRepository.findByEmail(email);
         //If the user has sign up and not generated otp then we will throw Exception
         if(temporaryUser==null) {
-        	return new ServiceResponse<Object>(false, null, "Please sign up first");
+        	return new ServiceResponse<OtpDetails>(false, null, "Please sign up first");
         }
         
         // Generate a random 6-digit OTP
@@ -63,9 +61,7 @@ public class LoginServiceImpl implements LoginService{
         OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
         
         sendOtpByEmail(email, otp);
-        Map<String,String> data= new HashMap();
-        data.put("Result", otpDetails.toString());
-        return new ServiceResponse<Object>(true, data, "Otp send on your email");
+        return new ServiceResponse<OtpDetails>(true, otpDetails, "Otp send on your email");
         
     }
     

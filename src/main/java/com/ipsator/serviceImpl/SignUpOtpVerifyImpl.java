@@ -40,7 +40,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
     	 * @return It will return OtpDetails record containing otp and expiry time of the otp 
     	 * @throws Exception
     	 */
-	    public ServiceResponse<Object> verifyOTP(String email,String otp){
+	    public ServiceResponse<User> verifyOTP(String email,String otp){
 	    	
 	    	OneTimePassword temporaryUser= otpRepository.findByEmail(email);
 	    	
@@ -55,10 +55,10 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	 * otherwise he will get an exception
 	    	 */
 	    	if(temporaryUser!=null && temporaryUser.getLockoutEndTime() != null) {
-	    		LocalDateTime currentTime= LocalDateTime.now();
-	    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();
+	    		LocalDateTime currentTime= LocalDateTime.now();//10:14
+	    		LocalDateTime lockOutEndTime= temporaryUser.getLockoutEndTime();//10:15
 	    		if(currentTime.isBefore(lockOutEndTime)) {
-	    			return new ServiceResponse<Object>(false, null, "Please try after "+temporaryUser.getLockoutEndTime());
+	    			return new ServiceResponse<User>(false, null, "Please try after "+temporaryUser.getLockoutEndTime());
 	    		}else {
 	    			temporaryUser.setOtpAttempts(0);
 	    			temporaryUser.setLockoutEndTime(null);
@@ -67,10 +67,10 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	        
 	    	if (!temporaryUser.getOtp().equals(otp)) {
 	        	//If the user is enters wrong otp then we will increase the otpAttempts
-	            temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);
+	            temporaryUser.setOtpAttempts(temporaryUser.getOtpAttempts()+1);//2
 	            otpRepository.save(temporaryUser);
 	            if(temporaryUser.getOtpAttempts()<5) {
-	            	return new ServiceResponse<Object>(false, null, "Invalid Otp");
+	            	return new ServiceResponse<User>(false, null, "Invalid Otp");
 	            }
 	        }
 	    	
@@ -81,16 +81,15 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	        	temporaryUser.setLockoutEndTime(lockOutEndTIme);
 //	        	temporaryUser.setOtpAttempts(0);
 	        	otpRepository.save(temporaryUser);
-	        	return new ServiceResponse<Object>(false, null, "Maximum Otp attempts reached.");
+	        	return new ServiceResponse<User>(false, null, "Maximum Otp attempts reached.");
 	        }
 	    	
 	    	if(temporaryUser.getExpirationTime()!=null && temporaryUser.getExpirationTime().isBefore(LocalDateTime.now())) {
-	    		return new ServiceResponse<Object>(false, null,"Otp has expire");
+	    		return new ServiceResponse<User>(false, null,"Otp has expire");
 	    	}
 	    	temporaryUser.setExpirationTime(null);
 	    	temporaryUser.setLockoutEndTime(null);
 	    	temporaryUser.setOtpAttempts(0);
-	    	temporaryUser.setStatus("Active");
 	    	temporaryUser.setSignUpTime(LocalDateTime.now());
 	    	otpRepository.save(temporaryUser);
 	    	// saving temporary user into user table
@@ -102,9 +101,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	user.setLastName(temporaryUser.getLastName());
 	    	user.setGender(temporaryUser.getGender());
 	    	userRepo.save(user);
-	    	Map<String,User> data= new HashMap();
-	    	data.put("user",user);
-	    	return new ServiceResponse<Object>(true,data ,"Sign up success");
+	    	return new ServiceResponse<User>(true,user ,"Sign up success");
 	    }
 
 	    

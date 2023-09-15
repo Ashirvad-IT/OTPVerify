@@ -1,5 +1,6 @@
 package com.ipsator.service;
 
+import com.ipsator.Entity.User;
 import com.ipsator.Exception.OneTimePasswordException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ServiceResponse;
@@ -9,5 +10,5 @@ import com.ipsator.payload.ServiceResponse;
  * This interface contain generateOtp method
  */
 public interface SignUpOtpVerify {
-	public ServiceResponse<Object> verifyOTP(String email,String otp);
+	public ServiceResponse<User> verifyOTP(String email,String otp);
 }

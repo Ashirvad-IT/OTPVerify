@@ -2,6 +2,7 @@ package com.ipsator.controller;
 
 
 import com.ipsator.Entity.User;
+import com.ipsator.Record.OtpDetails;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
@@ -34,8 +35,7 @@ public class LoginController {
     public LoginController(LoginServiceImpl otpLoginService) {
         this.otpLoginService = otpLoginService;
     }
-    /**
-     * 
+    /** 
      * @param email
      * @param otp
      * @return
@@ -44,7 +44,7 @@ public class LoginController {
     @GetMapping()
     public ResponseEntity<ApiResponse> userLogIn(@RequestParam String email) throws Exception {
         // Call the OTP login service to validate the OTP and perform login
-        ServiceResponse<Object> response = otpLoginService.userLogIn(email);
+        ServiceResponse<OtpDetails> response = otpLoginService.userLogIn(email);
 
         if(response.isSuccess()) {
         	return new ResponseEntity<>(new ApiResponse("Success",response.getData(),null),HttpStatus.OK);
