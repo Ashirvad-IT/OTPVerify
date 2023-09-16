@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
  * @since 2023
  */
 @RestController
-@RequestMapping("/api/register")
+@RequestMapping("/register")
 public class SignUpController {
 	private final SignUpServiceImpl registrationService;
 

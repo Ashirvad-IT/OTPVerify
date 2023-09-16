@@ -1,18 +1,27 @@
 package com.ipsator.controller;
 
 
+import com.ipsator.Entity.Request;
+import com.ipsator.Entity.Response;
 import com.ipsator.Entity.User;
 import com.ipsator.Record.OtpDetails;
-import com.ipsator.Record.UserDetails;
+import com.ipsator.Security.JwtHelper;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LoginService;
 import com.ipsator.serviceImpl.LoginServiceImpl;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,29 +35,52 @@ import org.springframework.web.bind.annotation.RestController;
  * This class is Login controller, base url is api/login.
  */
 @RestController
-@RequestMapping("/api/login")
 public class LoginController {
+	
+	@Autowired
+	private UserDetailsService userDetailsService;
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private JwtHelper jwtHelper;
+	
+	
+	private Logger logger= LoggerFactory.getLogger(Logger.class);
+	
+//	@Autowired
+//	public LoginController(UserDetailsService userDetailsService, AuthenticationManager authenticationManager, JwtHelper jwtHelper) {
+//		this.userDetailsService=userDetailsService;
+//		this.authenticationManager=authenticationManager;
+//		this.jwtHelper=jwtHelper;
+//	}
+	
+	@GetMapping("/login")
+	public ResponseEntity<Response> login(@RequestBody Request request){
+//		System.out.println("request "+request);
+		doAuthentication(request.getEmail(),request.getPassword());
+		UserDetails user= userDetailsService.loadUserByUsername(request.getEmail());
+		String token= jwtHelper.generateToken(user);
+		
+		Response jwtResponse= Response.builder()
+				.jwtToken(token)
+				.username(user.getUsername()).build();
+		return new ResponseEntity(jwtResponse,HttpStatus.OK);
+	}
 
-    private final LoginService otpLoginService;
+	private void doAuthentication(String email, String password) {
+//		System.out.println("email "+email+" password "+password);
+		UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken(email, password);
+		System.out.println("authenticationToken "+authenticationToken);
+		try {
+			authenticationManager.authenticate(authenticationToken);
+		}catch(BadCredentialsException exception){
+			throw new BadCredentialsException("Invalid username or password");
+		}
+	}
+	
 
-    @Autowired
-    public LoginController(LoginServiceImpl otpLoginService) {
-        this.otpLoginService = otpLoginService;
-    }
-    /** 
-     * @param email
-     * @param otp
-     * @return
-     * @throws Exception
-     */
-    @GetMapping()
-    public ResponseEntity<ApiResponse> userLogIn(@RequestParam String email) throws Exception {
-        // Call the OTP login service to validate the OTP and perform login
-        ServiceResponse<OtpDetails> response = otpLoginService.userLogIn(email);
-
-        if(response.isSuccess()) {
-        	return new ResponseEntity<>(new ApiResponse("Success",response.getData(),null),HttpStatus.OK);
-        }
-        return new ResponseEntity(new ApiResponse("Error",null,new Error(response.getMessage())),HttpStatus.BAD_REQUEST);   
-    }
+//	@ExceptionHandler(BadCredentialsException.class)
+//	public String exceptionHandler() {
+//		return "Credentials Invalid!!";
+//	}
 }

@@ -22,7 +22,7 @@ import com.ipsator.serviceImpl.SignUpOtpVerifyImpl;
  * This class is oneTimePassword controller
  */
 @RestController
-@RequestMapping("/api/sinup")
+@RequestMapping("/sinup")
 public class SignUpOtpVerifyController {
 
     private final SignUpOtpVerify otpService;

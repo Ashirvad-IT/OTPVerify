@@ -6,6 +6,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
@@ -25,13 +26,15 @@ import com.ipsator.service.SignUpOtpVerify;
  */
 @Service
 public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
-	 private  OneTimePasswordRepository otpRepository;
-	    private UserRepo userRepo;
+	 	private  OneTimePasswordRepository otpRepository;
+	 	private UserRepo userRepo;
+	    private PasswordEncoder passwordEncoder;
 
 	    @Autowired
-	    public SignUpOtpVerifyImpl(OneTimePasswordRepository otpRepository, UserRepo userRepo) {
+	    public SignUpOtpVerifyImpl(OneTimePasswordRepository otpRepository, UserRepo userRepo,PasswordEncoder passwordEncoder) {
 	        this.otpRepository = otpRepository;
 	        this.userRepo=userRepo;
+	        this.passwordEncoder=passwordEncoder;
 	    }
     	/**
     	 * This method is responsible to generate otp it will take email and then generate otp 
@@ -100,6 +103,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	user.setFirstName(temporaryUser.getFirstName());
 	    	user.setLastName(temporaryUser.getLastName());
 	    	user.setGender(temporaryUser.getGender());
+	    	user.setOtp(passwordEncoder.encode(temporaryUser.getOtp()));
 	    	userRepo.save(user);
 	    	return new ServiceResponse<User>(true,user ,"Sign up success");
 	    }
