@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
-import com.ipsator.Exception.OneTimePasswordException;
-import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.UserRepo;

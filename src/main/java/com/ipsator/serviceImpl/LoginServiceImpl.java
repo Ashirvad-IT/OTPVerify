@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
-import com.ipsator.Exception.OneTimePasswordException;
-import com.ipsator.Exception.UserException;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
@@ -61,7 +59,7 @@ public class LoginServiceImpl implements LoginService{
         OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
         
         sendOtpByEmail(email, otp);
-        return new ServiceResponse<OtpDetails>(true, otpDetails, "Otp send on your email");
+        return new ServiceResponse<OtpDetails>(true, otpDetails, "Otp send on your email. This otp will be your password");
         
     }
     

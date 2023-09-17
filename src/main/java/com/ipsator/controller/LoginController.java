@@ -45,33 +45,25 @@ public class LoginController {
 	private JwtHelper jwtHelper;
 	
 	
-	private Logger logger= LoggerFactory.getLogger(Logger.class);
+	private Logger logger= LoggerFactory.getLogger(Logger.class);	
 	
-//	@Autowired
-//	public LoginController(UserDetailsService userDetailsService, AuthenticationManager authenticationManager, JwtHelper jwtHelper) {
-//		this.userDetailsService=userDetailsService;
-//		this.authenticationManager=authenticationManager;
-//		this.jwtHelper=jwtHelper;
-//	}
 	
 	@GetMapping("/login")
 	public ResponseEntity<Response> login(@RequestBody Request request){
-//		System.out.println("request "+request);
 		doAuthentication(request.getEmail(),request.getPassword());
 		UserDetails user= userDetailsService.loadUserByUsername(request.getEmail());
 		String token= jwtHelper.generateToken(user);
 		
-		Response jwtResponse= Response.builder()
-				.jwtToken(token)
+		Response jwtResponse= Response.builder()//
+				.jwtToken(token)                //
 				.username(user.getUsername()).build();
 		return new ResponseEntity(jwtResponse,HttpStatus.OK);
 	}
 
 	private void doAuthentication(String email, String password) {
-//		System.out.println("email "+email+" password "+password);
 		UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken(email, password);
-		System.out.println("authenticationToken "+authenticationToken);
 		try {
+			//Provider manager is the implementation of AuthenticationManager
 			authenticationManager.authenticate(authenticationToken);
 		}catch(BadCredentialsException exception){
 			throw new BadCredentialsException("Invalid username or password");
@@ -79,8 +71,8 @@ public class LoginController {
 	}
 	
 
-//	@ExceptionHandler(BadCredentialsException.class)
-//	public String exceptionHandler() {
-//		return "Credentials Invalid!!";
-//	}
+	@ExceptionHandler(BadCredentialsException.class)
+	public String exceptionHandler() {
+		return "Credentials Invalid!!";
+	}
 }

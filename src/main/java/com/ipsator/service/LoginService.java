@@ -1,6 +1,6 @@
 package com.ipsator.service;
 
-import com.ipsator.Exception.OneTimePasswordException;
+
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.payload.ServiceResponse;
