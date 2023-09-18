@@ -13,11 +13,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
+import com.ipsator.Entity.TemporaryUser;
 import com.ipsator.Entity.User;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
+import com.ipsator.Repository.TemporaryUserRepo;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.payload.ServiceResponse;
+import com.ipsator.payload.UserDto;
 import com.ipsator.service.SignUpService;
 /**
  * 
@@ -29,16 +32,19 @@ import com.ipsator.service.SignUpService;
  */
 @Service
 public class SignUpServiceImpl implements SignUpService {
+	
     private final UserRepo userRepository;
     private  JavaMailSender mailSender;
-    
     private final OneTimePasswordRepository otpRepository;
+    private final TemporaryUserRepo temporaryUserRepo;
+    
 
     @Autowired
-    public SignUpServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository,JavaMailSender mailSender) {
+    public SignUpServiceImpl(UserRepo userRepository, OneTimePasswordRepository otpRepository,JavaMailSender mailSender,TemporaryUserRepo temporaryUserRepo) {
         this.userRepository = userRepository;
         this.otpRepository=otpRepository;
         this.mailSender=mailSender;
+        this.temporaryUserRepo=temporaryUserRepo;
     }
     
     /**
@@ -49,11 +55,33 @@ public class SignUpServiceImpl implements SignUpService {
      *@return It will return a string if the user has successfully register
      *@throws
      */
-    public ServiceResponse<OtpDetails> registerUser(User user) throws Exception{
+
+    public ServiceResponse<OtpDetails> registerUser(UserDto userDto) throws Exception{
         // Check if the email is already registered
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
         	return new ServiceResponse<>(false,null,"Email already registered");
             
+        }
+        TemporaryUser temporaryUser= temporaryUserRepo.findByEmail(userDto.getEmail());
+        if(temporaryUser!=null) {
+        	int emailSendAttempts = temporaryUser.getEmailSentAttempts();
+        	if(emailSendAttempts >= 3) {
+        		LocalDateTime now=LocalDateTime.now();
+        		if(now.isBefore(temporaryUser.getEmailLockUntil())) {
+        			return new ServiceResponse<>(false,null,"Account is locked till "+temporaryUser.getEmailLockUntil());
+        		}else {
+        			emailSendAttempts=1;
+        			temporaryUser.setEmailLockUntil(null);
+        			temporaryUser.setEmailSentAttempts(emailSendAttempts);
+        		}
+        	}
+        	else {
+        		emailSendAttempts= emailSendAttempts+1;
+        		temporaryUser.setEmailSentAttempts(emailSendAttempts);
+        	}
+        }
+        if(temporaryUser != null && temporaryUser.getEmailSentAttempts()>=3) {
+        	temporaryUser.setEmailLockUntil(LocalDateTime.now().plusHours(3));
         }
         // Generate a random 6-digit OTP
         String otp = String.format("%06d", new Random().nextInt(1000000));
@@ -61,20 +89,36 @@ public class SignUpServiceImpl implements SignUpService {
         // Set OTP expiration time (e.g., 5 minutes from now)
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
         
-
         // Send the OTP via email
-        sendOtpByEmail(user.getEmail(), otp);
-        //saving user in OneTimePassword table
-        OneTimePassword temporaryUser= new OneTimePassword();
-        temporaryUser.setFirstName(user.getFirstName());
-        temporaryUser.setLastName(user.getLastName());
-        temporaryUser.setEmail(user.getEmail());
-        temporaryUser.setAge(user.getAge());
-        temporaryUser.setGender(user.getGender());
-        temporaryUser.setOtp(otp);
-        temporaryUser.setExpirationTime(expirationTime);
-        otpRepository.save(temporaryUser);
-        OtpDetails otpDetails= new OtpDetails(user.getEmail(),otp,expirationTime);
+        sendOtpByEmail(userDto.getEmail(), otp);
+        
+        //Saving otp related information in otp table
+        OneTimePassword otpInformation= otpRepository.findByEmail(userDto.getEmail());
+        if(otpInformation==null) {
+        	otpInformation=new OneTimePassword();
+            otpInformation.setEmail(userDto.getEmail());
+            otpInformation.setOtp(otp);
+            otpInformation.setExpirationTime(expirationTime);
+        }else {
+        	otpInformation.setOtp(otp);
+            otpInformation.setExpirationTime(expirationTime);
+        }
+        otpRepository.save(otpInformation);
+        
+        if(temporaryUser==null) {
+        	temporaryUser= new TemporaryUser();
+        	temporaryUser.setEmailSentAttempts(1);
+        }
+        
+        //Until the email is not verify user details will save in temporaryUser table
+        temporaryUser.setFirstName(userDto.getFirstName());
+        temporaryUser.setLastName(userDto.getLastName());
+        temporaryUser.setEmail(userDto.getEmail());
+        temporaryUser.setAge(userDto.getAge());
+        temporaryUser.setGender(userDto.getGender());
+        temporaryUser.setLastEmailSendTime(LocalDateTime.now());
+        temporaryUserRepo.save(temporaryUser);
+        OtpDetails otpDetails= new OtpDetails(userDto.getEmail(),otp,expirationTime);
         return new ServiceResponse(true,otpDetails,"Verify your email");
         
     }
@@ -83,7 +127,9 @@ public class SignUpServiceImpl implements SignUpService {
         message.setTo(email);
         message.setSubject("Your OTP Code");
         message.setText("Your OTP code is: " + otp);
-
         mailSender.send(message);
     }
+    
+    
+    
 }

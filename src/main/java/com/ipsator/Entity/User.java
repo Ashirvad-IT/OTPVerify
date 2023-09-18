@@ -2,6 +2,7 @@ package com.ipsator.Entity;
 
 import java.util.Collection;
 
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources.Chain.Strategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,13 +28,13 @@ import lombok.NoArgsConstructor;
 public class User implements UserDetails{
 	
 	@Id
+	@GeneratedValue(strategy =GenerationType.AUTO)
 	private Long id;
 	
 	@Email
 	@NotNull
 	private String email;
-	
-	
+
 	@NotNull
 	private String firstName;
 	
@@ -44,7 +45,7 @@ public class User implements UserDetails{
 	
 	private String gender;
 	
-	private String otp;
+	private String password;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -55,7 +56,7 @@ public class User implements UserDetails{
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return otp;
+		return password;
 	}
 
 	@Override

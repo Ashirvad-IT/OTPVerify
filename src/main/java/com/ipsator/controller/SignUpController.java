@@ -14,6 +14,7 @@ import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
+import com.ipsator.payload.UserDto;
 import com.ipsator.serviceImpl.SignUpServiceImpl;
 
 import jakarta.validation.Valid;
@@ -38,8 +39,8 @@ public class SignUpController {
      * @throws Exception
      */
     @PostMapping// user fix
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody @Valid User user) throws Exception {
-    	ServiceResponse<OtpDetails> response= registrationService.registerUser(user);
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody @Valid UserDto userDto) throws Exception {
+    	ServiceResponse<OtpDetails> response= registrationService.registerUser(userDto);
     	if(response.isSuccess()) {
     		return new ResponseEntity<ApiResponse>(new ApiResponse("success", response.getData(), null),HttpStatus.OK);
     	}
