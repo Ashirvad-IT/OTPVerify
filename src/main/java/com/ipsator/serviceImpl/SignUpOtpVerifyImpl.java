@@ -1,28 +1,21 @@
 package com.ipsator.serviceImpl;
-import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.TemporaryUser;
 import com.ipsator.Entity.User;
-import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.TemporaryUserRepo;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.SignUpOtpVerify;
 /**
- * 
- * @author Ashirvad Kumar
- * This class provide the implementation of OneTimePasswordService interface and provide the implementation to 
- * generateOtp method
+ * Service class responsible for verifying OTP (One-Time Password) during the signup process.
+ * It performs OTP validation, account locking, and user creation.
  */
 @Service
 public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
@@ -31,7 +24,14 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	 	private UserRepo userRepo;
 	    private PasswordEncoder passwordEncoder;
 	    private TemporaryUserRepo temporaryUserRepo;
-
+	    /**
+	     * Constructs a new SignUpOtpVerifyImpl with the required dependencies.
+	     * 
+	     * @param otpRepository      The repository for managing OTP information.
+	     * @param userRepo           The repository for managing user information.
+	     * @param passwordEncoder    The password encoder for hashing OTPs.
+	     * @param temporaryUserRepo The repository for temporary user information.
+	     */
 	    @Autowired
 	    public SignUpOtpVerifyImpl(OneTimePasswordRepository otpRepository, UserRepo userRepo,PasswordEncoder passwordEncoder,TemporaryUserRepo temporaryUserRepo) {
 	        this.otpRepository = otpRepository;
@@ -39,27 +39,22 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	        this.passwordEncoder=passwordEncoder;
 	        this.temporaryUserRepo=temporaryUserRepo;
 	    }
-    	/**
-    	 * This method is responsible to generate otp it will take email and then generate otp 
-    	 * 
-    	 * @param email It is string data type
-    	 * @return It will return OtpDetails record containing otp and expiry time of the otp 
-    	 * @throws Exception
-    	 */
+	    /**
+	     * Verify the OTP for a given email during the signup process.
+	     * 
+	     * @param email The email associated with the OTP.
+	     * @param otp   The OTP to be verified.
+	     * @return A ServiceResponse with information about the verification result.
+	     */
 	    public ServiceResponse<User> verifyOTP(String email,String otp){
 	    	
 	    	OneTimePassword otpInformation= otpRepository.findByEmail(email);
 	    	
-	    	/**
-	    	 * Here user has not sign up and trying to generate otp
-	    	 */
+	    	
 	    	if(otpInformation==null) {
 	    		return new ServiceResponse(false,null,"Please sign up first");
 	    	}
-	    	/**
-	    	 * Here we are checking i.e user enter the otp before the expiry time
-	    	 * otherwise he will get an exception
-	    	 */
+	    	
 	    	if(otpInformation!=null && otpInformation.getLockoutEndTime() != null) {
 	    		LocalDateTime currentTime= LocalDateTime.now();//10:14
 	    		LocalDateTime lockOutEndTime= otpInformation.getLockoutEndTime();//10:15

@@ -1,8 +1,7 @@
 package com.ipsator.Entity;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources.Chain.Strategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,10 +41,26 @@ public class User implements UserDetails{
 	
 	private int age;
 	
-	private String gender;
+	private String otp;
 	
-	private String password;
-
+	private int emailsendAttempt;
+	
+	private LocalDateTime emailLockoutUntil; 
+	
+	private LocalDateTime lastEmailSend;
+	
+	private LocalDateTime createdTime;
+	
+	private LocalDateTime updatedDate;
+	
+	private LocalDateTime otpExpireTime;
+	
+	private LocalDateTime otpLockoutUntil;
+	
+	private int otpAttempts;
+	
+	private Boolean isUserVerified;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
@@ -56,7 +70,7 @@ public class User implements UserDetails{
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return password;
+		return null;
 	}
 
 	@Override

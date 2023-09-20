@@ -2,20 +2,15 @@ package com.ipsator.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.User;
-import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.SignUpOtpVerify;
-import com.ipsator.serviceImpl.SignUpOtpVerifyImpl;
 /**
  * 
  * @author Ashirvad Kumar

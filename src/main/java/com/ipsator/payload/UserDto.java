@@ -3,7 +3,6 @@ package com.ipsator.payload;
 import java.time.LocalDateTime;
 
 import com.ipsator.Entity.OneTimePassword;
-import com.ipsator.Entity.TemporaryUser;
 import com.ipsator.Entity.User;
 
 import jakarta.persistence.Entity;

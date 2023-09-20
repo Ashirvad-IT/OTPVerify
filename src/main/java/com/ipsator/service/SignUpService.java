@@ -1,6 +1,6 @@
 package com.ipsator.service;
 
-import com.ipsator.Entity.User;
+
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.payload.UserDto;

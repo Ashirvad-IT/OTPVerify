@@ -1,12 +1,7 @@
 package com.ipsator.serviceImpl;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.ipsator.Entity.OneTimePassword;
 import com.ipsator.Entity.TemporaryUser;
-import com.ipsator.Entity.User;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.OneTimePasswordRepository;
 import com.ipsator.Repository.TemporaryUserRepo;
@@ -73,7 +67,7 @@ public class SignUpServiceImpl implements SignUpService {
         			emailSendAttempts=1;
         			temporaryUser.setEmailLockUntil(null);
         			temporaryUser.setEmailSentAttempts(emailSendAttempts);
-        		}
+        		} 
         	}
         	else {
         		emailSendAttempts= emailSendAttempts+1;

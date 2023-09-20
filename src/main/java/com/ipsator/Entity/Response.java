@@ -1,7 +1,5 @@
 package com.ipsator.Entity;
 
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -3,14 +3,7 @@ package com.ipsator.controller;
 
 import com.ipsator.Entity.Request;
 import com.ipsator.Entity.Response;
-import com.ipsator.Entity.User;
-import com.ipsator.Record.OtpDetails;
 import com.ipsator.Security.JwtHelper;
-import com.ipsator.payload.ApiResponse;
-import com.ipsator.payload.Error;
-import com.ipsator.payload.ServiceResponse;
-//import com.ipsator.service.LoginService;
-//import com.ipsator.serviceImpl.LoginServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 /**
  * 
@@ -60,12 +50,14 @@ public class LoginController {
 		return new ResponseEntity(jwtResponse,HttpStatus.OK);
 	}
 
+	
 	private void doAuthentication(String email, String password) {
 		UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken(email, password);
 		try {
 			//Provider manager is the implementation of AuthenticationManager
 			authenticationManager.authenticate(authenticationToken);
-		}catch(BadCredentialsException exception){
+		}
+		catch(BadCredentialsException exception){
 			throw new BadCredentialsException("Invalid username or password");
 		}
 	}
