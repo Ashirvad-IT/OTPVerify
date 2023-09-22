@@ -2,6 +2,7 @@ package com.ipsator.serviceImpl;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ import com.ipsator.service.SignUpOtpVerify;
  */
 @Service
 public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
-	
-	 	
+		
+		@Value("${email.lockout.duration.hours}")
+		private int emailLockoutDuration;
 	 	private UserRepo userRepo;
 	    
 	    
@@ -51,7 +53,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 			// we will set otp attempts = 0. when lockout time will complete, after i.e. we will allow user
 			// to enter the otp.
 			if(user.getOtpAttempts() > 5) {
-				LocalDateTime lockOutTime = user.getOtpLockoutUntil().plusHours(3);
+				LocalDateTime lockOutTime = user.getOtpLockoutUntil().plusHours(emailLockoutDuration);
 				user.setOtpAttempts(0);
 			}
 			// Here we are checking otp is expire or not

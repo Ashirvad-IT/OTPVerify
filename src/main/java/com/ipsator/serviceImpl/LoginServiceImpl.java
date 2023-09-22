@@ -3,6 +3,7 @@ package com.ipsator.serviceImpl;
 import java.time.LocalDateTime;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import com.ipsator.service.LoginService;
 @Service
 public class LoginServiceImpl implements LoginService{
 	
+	@Value("${otp.expire.duration.minutes}")
+ 	private int otpExpireDuration;
 	private UserRepo userRepo;
 	private JavaMailSender mailSender;
 	public LoginServiceImpl(UserRepo userRepo, JavaMailSender mailSender) {
@@ -41,10 +44,11 @@ public class LoginServiceImpl implements LoginService{
     		} 
     	}
     	if(user!=null && emailSendAttempts > 3) {
-    		user.setEmailLockoutUntil(LocalDateTime.now().plusHours(3));
+    		user.setEmailLockoutUntil(LocalDateTime.now().plusHours(otpExpireDuration));
     		user.setEmailsendAttempt(0);
     	}
     	String otp= String.format("%06d", new Random().nextInt(1000000));
+    	user.setOtpExpireTime(LocalDateTime.now().plusMinutes(5));
     	user.setOtp(otp);
 		sendOtpByEmail(email, otp);
 		emailSendAttempts= emailSendAttempts+1;
