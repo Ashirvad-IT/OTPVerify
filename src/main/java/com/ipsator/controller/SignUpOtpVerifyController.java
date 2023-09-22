@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ipsator.Entity.User;
+import com.ipsator.Record.UserDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
@@ -34,7 +35,7 @@ public class SignUpOtpVerifyController {
      */
     @PostMapping("/otp")
     public ResponseEntity<ApiResponse> verifyOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
-    	ServiceResponse<User> response= otpService.verifyOTP(email,otp);
+    	ServiceResponse<UserDetails> response= otpService.verifyOTP(email,otp);
     	if(response.isSuccess()) {
     		return new ResponseEntity<ApiResponse>(new ApiResponse("Success",response.getData(),null),HttpStatus.CREATED);
     	}

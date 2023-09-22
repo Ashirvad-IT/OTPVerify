@@ -13,5 +13,4 @@ public class ServiceResponse<T> {
 	private String message;
 	
 	
-	
 }

@@ -12,6 +12,7 @@ import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.payload.UserDto;
+import com.ipsator.service.SignUpService;
 import com.ipsator.serviceImpl.SignUpServiceImpl;
 
 import jakarta.validation.Valid;
@@ -21,9 +22,8 @@ import jakarta.validation.Valid;
  * @since 2023
  */
 @RestController
-@RequestMapping("/register")
 public class SignUpController {
-	private final SignUpServiceImpl registrationService;
+	private final SignUpService registrationService;
 
     @Autowired
     public SignUpController(SignUpServiceImpl registrationService) {
@@ -35,7 +35,7 @@ public class SignUpController {
      * @return
      * @throws Exception
      */
-    @PostMapping// user fix
+    @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@RequestBody @Valid UserDto userDto) throws Exception {
     	ServiceResponse<OtpDetails> response= registrationService.registerUser(userDto);
     	if(response.isSuccess()) {

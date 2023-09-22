@@ -1,9 +1,15 @@
 package com.ipsator.controller;
 
-
+import com.ipsator.payload.Error;
 import com.ipsator.Entity.Request;
 import com.ipsator.Entity.Response;
+import com.ipsator.Record.OtpDetails;
 import com.ipsator.Security.JwtHelper;
+import com.ipsator.payload.ApiResponse;
+import com.ipsator.payload.ServiceResponse;
+import com.ipsator.service.LoginOtpVerifyService;
+import com.ipsator.service.LoginService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 /**
  * 
@@ -27,44 +34,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	@Autowired
-	private JwtHelper jwtHelper;
+	private LoginService loginService;
 	
-	
-	private Logger logger= LoggerFactory.getLogger(Logger.class);	
-	
+	public LoginController(LoginService loginService) {
+		this.loginService=loginService;
+	}
 	
 	@GetMapping("/login")
-	public ResponseEntity<Response> login(@RequestBody Request request){
-		doAuthentication(request.getEmail(),request.getPassword());
-		UserDetails user= userDetailsService.loadUserByUsername(request.getEmail());
-		String token= jwtHelper.generateToken(user);
-		
-		Response jwtResponse= Response.builder()//
-				.jwtToken(token)                //
-				.username(user.getUsername()).build();
-		return new ResponseEntity(jwtResponse,HttpStatus.OK);
+	public ResponseEntity<ApiResponse> login(@RequestParam String email){
+		ServiceResponse<OtpDetails> result=  loginService.loginUser(email);
+		if(result.isSuccess()) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse("Success",result.getData(), null),HttpStatus.OK);
+		}
+		return new ResponseEntity(new ApiResponse("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
 	}
 
-	
-	private void doAuthentication(String email, String password) {
-		UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken(email, password);
-		try {
-			//Provider manager is the implementation of AuthenticationManager
-			authenticationManager.authenticate(authenticationToken);
-		}
-		catch(BadCredentialsException exception){
-			throw new BadCredentialsException("Invalid username or password");
-		}
-	}
-	
-
-	@ExceptionHandler(BadCredentialsException.class)
-	public String exceptionHandler() {
-		return "Credentials Invalid!!";
-	}
 }

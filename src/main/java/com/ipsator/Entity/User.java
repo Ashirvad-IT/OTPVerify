@@ -103,7 +103,6 @@ public class User implements UserDetails{
 		return true;
 	}
 	
-	//created date
-	//updated date
+
 	
 }

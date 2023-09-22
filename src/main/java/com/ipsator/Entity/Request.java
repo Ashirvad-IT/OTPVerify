@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Request {
 	private String email;
-	private String password;
+	private String otp;
 }

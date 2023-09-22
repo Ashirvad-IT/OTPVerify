@@ -2,7 +2,7 @@ package com.ipsator.payload;
 
 import java.time.LocalDateTime;
 
-import com.ipsator.Entity.OneTimePassword;
+
 import com.ipsator.Entity.User;
 
 import jakarta.persistence.Entity;
@@ -35,26 +35,5 @@ public class UserDto {
     private int  emailSendAttempts;
     private LocalDateTime lastEmailsendtime;
     
-    public User mapToUser(UserDto userDto) {
-    	User user= new User();
-    	user.setEmail(userDto.getEmail());
-    	user.setAge(userDto.getAge());
-    	user.setFirstName(userDto.getFirstName());
-    	user.setGender(userDto.getGender());
-    	user.setLastName(userDto.getLastName());
-    	user.setPassword(userDto.getOtp());
-    	return user;
-    }
-    
-    
-    
-    public OneTimePassword mapToOneTimePassword(UserDto userDto) {
-    	OneTimePassword oneTimePassword= new OneTimePassword();
-    	oneTimePassword.setOtp(userDto.getOtp());
-    	oneTimePassword.setExpirationTime(userDto.getExpirationTime());
-    	oneTimePassword.setEmail(userDto.getEmail());
-    	oneTimePassword.setLockoutEndTime(userDto.getLockoutEndTime());
-    	oneTimePassword.setOtpAttempts(userDto.getOtpAttempts());
-    	return oneTimePassword;
-    }
+   
 }
