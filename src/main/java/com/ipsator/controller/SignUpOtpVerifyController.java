@@ -3,6 +3,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import com.ipsator.Record.UserDetails;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
+import com.ipsator.payload.UserDto;
 import com.ipsator.service.SignUpOtpVerify;
 /**
  * 
@@ -18,7 +20,7 @@ import com.ipsator.service.SignUpOtpVerify;
  * This class is oneTimePassword controller
  */
 @RestController
-@RequestMapping("/sinup")
+@RequestMapping("/signup")
 public class SignUpOtpVerifyController {
 
     private final SignUpOtpVerify otpService;
@@ -34,11 +36,11 @@ public class SignUpOtpVerifyController {
      * @throws Exception
      */
     @PostMapping("/otp")
-    public ResponseEntity<ApiResponse> verifyOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
-    	ServiceResponse<UserDetails> response= otpService.verifyOTP(email,otp);
+    public ResponseEntity<ApiResponse> verifyOtp(@RequestBody UserDto userDto) throws Exception {
+    	ServiceResponse<UserDetails> response= otpService.verifyOTP(userDto);
     	if(response.isSuccess()) {
     		return new ResponseEntity<ApiResponse>(new ApiResponse("Success",response.getData(),null),HttpStatus.CREATED);
     	}
-    	return new ResponseEntity(new ApiResponse("Error", null, new Error(response.getMessage())),HttpStatus.BAD_REQUEST);
+    	return new ResponseEntity<>(new ApiResponse("Error", null, new Error(response.getMessage())),HttpStatus.BAD_REQUEST);
     }
 }

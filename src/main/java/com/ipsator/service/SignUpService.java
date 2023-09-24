@@ -10,5 +10,5 @@ import com.ipsator.payload.UserDto;
  * This interface contain registerUser method
  */
 public interface SignUpService {
-	public ServiceResponse<OtpDetails> registerUser(UserDto userDto) throws Exception;
+	public ServiceResponse<OtpDetails> registerUser(String email);
 }

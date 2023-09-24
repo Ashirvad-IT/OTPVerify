@@ -26,23 +26,24 @@ public class SecurityConfig {
 	private UserDetailsService userDetailsService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/**").authenticated()
-						.requestMatchers("/login", "/register", "/sinup/otp","/login/otp").permitAll().anyRequest().authenticated())
+						.requestMatchers("/login", "/register", "/signup/otp", "/login/otp").permitAll().anyRequest()
+						.authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtauthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);//
 		return http.build();
 	}
 
-	@Bean
-	public DaoAuthenticationProvider daoAuthenticationProvider() {
-		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-		return daoAuthenticationProvider;
-	}
+//	@Bean
+//	public DaoAuthenticationProvider daoAuthenticationProvider() {
+//		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+//		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+//		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+//		return daoAuthenticationProvider;
+//	}
 }
