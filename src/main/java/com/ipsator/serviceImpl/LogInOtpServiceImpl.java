@@ -42,7 +42,7 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 	//otp-> otpExpireTime, otpLockoutTime, otpAttempts
 	@Override
 	public ServiceResponse<Response> verifyLogInOtp(Request request) {
-		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(request.getEmail());
+		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(request.getEmail()); 
 		if(opt.isEmpty()) {
 			return new ServiceResponse<>(false,null,"Please sign up first");
 		}

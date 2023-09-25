@@ -62,7 +62,7 @@ public class SignUpServiceImpl implements SignUpService {
 			int emailSendAttempts = newUserOtpEmailDetails.getEmailsendAttempt();
 			LocalDateTime emailLock= newUserOtpEmailDetails.getEmailLockoutUntil();
 			if(emailLock!=null) {
-	    		LocalDateTime now=LocalDateTime.now();
+	    		LocalDateTime now=LocalDateTime.now(); 
 	    		LocalDateTime lockOutTime= newUserOtpEmailDetails.getEmailLockoutUntil();
 	    		if(lockOutTime.isAfter(now)) {
 	    			return new ServiceResponse<>(false,null,"Account is locked till "+newUserOtpEmailDetails.getEmailLockoutUntil());

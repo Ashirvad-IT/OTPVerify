@@ -12,3 +12,4 @@ import com.ipsator.payload.UserDto;
 public interface SignUpOtpVerify {
 	public ServiceResponse<UserDetails> verifyOTP(UserDto userDto);
 }
+ 

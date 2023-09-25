@@ -11,7 +11,7 @@ public class OtpEmailVerifier {
 	public OtpEmailVerifier(UserRepo userRepo) {
 		this.userRepo=userRepo;
 	}
-	
+	 
 	public static void verifyEmail(String email) {
 		
 	}

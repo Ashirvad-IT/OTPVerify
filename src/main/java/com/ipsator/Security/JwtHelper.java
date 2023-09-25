@@ -51,7 +51,7 @@ public class JwtHelper {
 		Map<String, Object> claims= new HashMap();
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
-	
+	 
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username= getUsernameFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

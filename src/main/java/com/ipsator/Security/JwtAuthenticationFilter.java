@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}else {
 				logger.info("Validations fails");
-			}
+			} 
 		}
 		
 		filterChain.doFilter(request, response);

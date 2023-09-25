@@ -20,7 +20,7 @@ public class LoginOtpVerifyController {
 	public LoginOtpVerifyController(LoginOtpVerifyService loginOtpVerifyService) {
 		this.loginOtpVerifyService=loginOtpVerifyService;
 	}
-	
+	 
 	@PostMapping("/login/otp")
 	public ResponseEntity<ApiResponse> verifyLoginOtp(@RequestBody Request request){
 		ServiceResponse<Response> result=loginOtpVerifyService.verifyLogInOtp(request);

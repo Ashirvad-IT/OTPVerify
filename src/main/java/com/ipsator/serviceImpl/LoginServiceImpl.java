@@ -35,7 +35,7 @@ public class LoginServiceImpl implements LoginService{
 	@Override
 	public ServiceResponse<OtpDetails> loginUser(String email) {
 		User user=userRepo.findByEmail(email);
-		if(user!=null) {
+		if(user==null) { 
 			return new ServiceResponse<>(false,null,"User with this email already exist");
 		}
 		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(email);

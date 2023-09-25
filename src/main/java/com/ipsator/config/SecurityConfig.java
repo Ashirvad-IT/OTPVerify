@@ -26,7 +26,7 @@ public class SecurityConfig {
 	private UserDetailsService userDetailsService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
+	 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
@@ -38,6 +38,8 @@ public class SecurityConfig {
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);//
 		return http.build();
 	}
+	
+	
 
 //	@Bean
 //	public DaoAuthenticationProvider daoAuthenticationProvider() {

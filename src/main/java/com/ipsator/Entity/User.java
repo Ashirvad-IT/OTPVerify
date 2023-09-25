@@ -1,15 +1,22 @@
 package com.ipsator.Entity;
 
+import com.ipsator.Entity.Permission;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.*;
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,7 +27,6 @@ import lombok.NoArgsConstructor;
  * @author Ashirvad Kumar
  * 
  */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -40,19 +46,25 @@ public class User implements UserDetails{
 	
 	@NotNull
 	private String lastName;
-	
+	 
 	private int age;
 	
 	private LocalDateTime createdTime;
 	
 	private LocalDateTime updatedDate;
 	
-	///SimpleGrantedAuthority sga=new SimpleGrantedAuthority(email);
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	public List<Permission> permissions = new ArrayList();
+	
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<GrantedAuthority> authorities = new HashSet<>();
+        for (Permission permission : permissions) {
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
+        }
+        return authorities;
+//		return null;
 	}
 
 	@Override

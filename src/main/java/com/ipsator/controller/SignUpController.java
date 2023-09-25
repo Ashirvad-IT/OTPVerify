@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 public class SignUpController {
 	private final SignUpService registrationService;
-
+ 
     @Autowired
     public SignUpController(SignUpServiceImpl registrationService) {
         this.registrationService = registrationService;

@@ -12,3 +12,4 @@ import com.ipsator.payload.UserDto;
 public interface SignUpService {
 	public ServiceResponse<OtpDetails> registerUser(String email);
 }
+ 
