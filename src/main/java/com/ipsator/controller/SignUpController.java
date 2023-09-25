@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.payload.ApiResponse;
@@ -36,8 +37,8 @@ public class SignUpController {
      * @throws Exception
      */
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody @Valid UserDto userDto) throws Exception {
-    	ServiceResponse<OtpDetails> response= registrationService.registerUser(userDto);
+    public ResponseEntity<ApiResponse> registerUser(@RequestParam String email){
+    	ServiceResponse<OtpDetails> response= registrationService.registerUser(email);
     	if(response.isSuccess()) {
     		return new ResponseEntity<ApiResponse>(new ApiResponse("success", response.getData(), null),HttpStatus.OK);
     	}

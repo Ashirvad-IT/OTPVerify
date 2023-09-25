@@ -3,6 +3,7 @@ package com.ipsator.Entity;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
@@ -19,10 +20,11 @@ import lombok.NoArgsConstructor;
  * @author Ashirvad Kumar
  * 
  */
-@Entity
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Entity 
 public class User implements UserDetails{
 	
 	@Id
@@ -41,25 +43,11 @@ public class User implements UserDetails{
 	
 	private int age;
 	
-	private String otp;
-	
-	private int emailsendAttempt;
-	
-	private LocalDateTime emailLockoutUntil; 
-	
-	private LocalDateTime lastEmailSend;
-	
 	private LocalDateTime createdTime;
 	
 	private LocalDateTime updatedDate;
 	
-	private LocalDateTime otpExpireTime;
-	
-	private LocalDateTime otpLockoutUntil;
-	
-	private int otpAttempts;
-	
-	private Boolean isUserVerified;
+	///SimpleGrantedAuthority sga=new SimpleGrantedAuthority(email);
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
