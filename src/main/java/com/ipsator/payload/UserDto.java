@@ -31,13 +31,6 @@ public class UserDto {
     private String lastName;
     private String gender;
     private int age;
-    private String otp;    
-    private LocalDateTime expirationTime;
-    private int otpAttempts;
-    private LocalDateTime lockoutEndTime;
-    private LocalDateTime signUpTime;
-    private int  emailSendAttempts;
-    private LocalDateTime lastEmailsendtime;
     public List<String> permissions = new ArrayList<>(); 
    
 }

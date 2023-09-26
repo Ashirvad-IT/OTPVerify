@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.ipsator.Entity.*;
 import com.ipsator.Entity.EmailOtp;
 import com.ipsator.Entity.User;
-import com.ipsator.Record.UserDetails;
+import com.ipsator.Record.UserRecord;
 import com.ipsator.Repository.EmailOtpRepo;
 import com.ipsator.Repository.PermissionRepo;
 import com.ipsator.Repository.UserRepo;
@@ -41,7 +41,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	        this.permissionRepo=permissionRepo;
 	    }
 	    
-	    public ServiceResponse<UserDetails> verifyOTP(UserDto userDto){	 
+	    public ServiceResponse<UserRecord> verifyOTP(UserDto userDto){	 
 	    	User user= userRepo.findByEmail(userDto.getEmail());
 	    	if(user!=null) {
 	    		return new ServiceResponse<>(false,null,"User with this email already register");
@@ -111,7 +111,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 			emailOtpRepo.delete(newUserOtpEmailDetails);
 
 
-			return new ServiceResponse<>(true, new UserDetails(user.getEmail(),user.getFirstName(),user.getLastName(),user.getAge()),null);
+			return new ServiceResponse<>(true, new UserRecord(user.getEmail(),user.getFirstName(),user.getLastName(),user.getAge()),null);
 	    }
 
 	    

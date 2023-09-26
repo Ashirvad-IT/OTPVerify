@@ -8,13 +8,41 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ipsator.Entity.User;
+import com.ipsator.Record.UserRecord;
+import com.ipsator.payload.ApiResponse;
+import com.ipsator.payload.Error;
+import com.ipsator.payload.ServiceResponse;
+import com.ipsator.service.UserService;
 
 @RestController
 @RequestMapping("/api")
 public class AppController {
 	
+	UserService userService;
+	
+	public AppController(UserService userService) {
+		this.userService=userService;
+	}
+	
+	@PostMapping("/user")
+	public ResponseEntity<ApiResponse> createUser(@RequestBody UserRecord userRecord){
+		if(userRecord==null) {
+			//new ResponseEntity(new ApiResponse("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST)
+			return new ResponseEntity<ApiResponse>(new ApiResponse("Error",null,new Error("Please enter the details")),HttpStatus.BAD_REQUEST);
+		}
+		ServiceResponse<UserRecord> result  = userService.createUser(userRecord);
+		if(result.isSuccess()) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse<>("Success",result.getData(),null),HttpStatus.OK);
+		}else {
+			return new ResponseEntity<ApiResponse>(new ApiResponse<>("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
+		}
+		
+	}
 	
 	@GetMapping("/sec")
 	@PreAuthorize("hasAuthority('User:Read')")

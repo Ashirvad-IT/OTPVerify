@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class LoginController {
 		this.loginService=loginService;
 	}
 	
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<ApiResponse> login(@RequestParam String email){
 		ServiceResponse<OtpDetails> result=  loginService.loginUser(email);
 		if(result.isSuccess()) {
