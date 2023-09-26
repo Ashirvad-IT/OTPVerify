@@ -2,9 +2,7 @@ package com.ipsator.Entity;
 
 import com.ipsator.Entity.Permission;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.*;
-import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,9 +52,8 @@ public class User implements UserDetails{
 	private LocalDateTime updatedDate;
 	
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	public List<Permission> permissions = new ArrayList();
-	
-	//simpleGr
+	public Set<Permission> permissions = new HashSet<>();
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<>();

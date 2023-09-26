@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiResponse {
+public class ApiResponse<T> {
 	private String status;
-	private Object data;
+	private T data;
 	private Error error;
 	
 	 

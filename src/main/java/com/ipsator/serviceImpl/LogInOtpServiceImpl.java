@@ -45,7 +45,6 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		
 		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(request.getEmail()); 
 		if(opt.isEmpty()) {
-
 			return new ServiceResponse<>(false,null,"Please Generate OTP first");
 
 		}
