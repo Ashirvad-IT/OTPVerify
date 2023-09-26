@@ -50,6 +50,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	if(opt.isEmpty()) {
 	    		return new ServiceResponse<>(false,null,"Please sign up first");
 	    	}
+	    	 
 	    	EmailOtp newUserOtpEmailDetails= opt.get();
 	    	//Current Time
 			LocalDateTime currentTime= LocalDateTime.now();
@@ -106,7 +107,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	newUserOtpEmailDetails.setEmailLockoutUntil(null);
 	    	newUserOtpEmailDetails.setEmailsendAttempt(0);
 			userRepo.save(user);
-			emailOtpRepo.save(newUserOtpEmailDetails);
+			emailOtpRepo.delete(newUserOtpEmailDetails);
 			return new ServiceResponse<>(true, new UserDetails(user.getEmail(),user.getFirstName(),user.getLastName(),user.getAge()),null);
 	    }
 

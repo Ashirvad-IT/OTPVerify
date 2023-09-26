@@ -56,7 +56,7 @@ public class User implements UserDetails{
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	public List<Permission> permissions = new ArrayList();
 	
-	
+	//simpleGr
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<>();
