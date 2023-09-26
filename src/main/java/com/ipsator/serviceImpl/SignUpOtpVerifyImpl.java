@@ -107,7 +107,10 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	newUserOtpEmailDetails.setEmailLockoutUntil(null);
 	    	newUserOtpEmailDetails.setEmailsendAttempt(0);
 			userRepo.save(user);
+
 			emailOtpRepo.delete(newUserOtpEmailDetails);
+
+
 			return new ServiceResponse<>(true, new UserDetails(user.getEmail(),user.getFirstName(),user.getLastName(),user.getAge()),null);
 	    }
 
