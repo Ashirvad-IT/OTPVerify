@@ -8,3 +8,4 @@ import com.ipsator.payload.ServiceResponse;
 public interface LoginOtpVerifyService {
 	public ServiceResponse<Response> verifyLogInOtp(Request request);
 }
+ 

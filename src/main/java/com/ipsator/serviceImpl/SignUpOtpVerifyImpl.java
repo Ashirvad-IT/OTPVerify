@@ -1,16 +1,22 @@
 package com.ipsator.serviceImpl;
+import java.security.AllPermission;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.ipsator.Entity.*;
 import com.ipsator.Entity.EmailOtp;
 import com.ipsator.Entity.User;
 import com.ipsator.Record.UserDetails;
 import com.ipsator.Repository.EmailOtpRepo;
+import com.ipsator.Repository.PermissionRepo;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.payload.UserDto;
@@ -26,11 +32,13 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 		private int emailLockoutDuration;
 	 	private UserRepo userRepo;
 	    private EmailOtpRepo emailOtpRepo;
+	    private PermissionRepo permissionRepo;  
 	    
 	    @Autowired
-	    public SignUpOtpVerifyImpl(UserRepo userRepo,EmailOtpRepo emailOtprepo) {	       
+	    public SignUpOtpVerifyImpl(UserRepo userRepo,EmailOtpRepo emailOtprepo,PermissionRepo permissionRepo) {	       
 	        this.userRepo=userRepo;
 	        this.emailOtpRepo=emailOtprepo;
+	        this.permissionRepo=permissionRepo;
 	    }
 	    
 	    public ServiceResponse<UserDetails> verifyOTP(UserDto userDto){	 
@@ -42,6 +50,7 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	if(opt.isEmpty()) {
 	    		return new ServiceResponse<>(false,null,"Please sign up first");
 	    	}
+	    	 
 	    	EmailOtp newUserOtpEmailDetails= opt.get();
 	    	//Current Time
 			LocalDateTime currentTime= LocalDateTime.now();
@@ -84,10 +93,24 @@ public class SignUpOtpVerifyImpl implements SignUpOtpVerify {
 	    	user.setEmail(userDto.getEmail());
 	    	user.setFirstName(userDto.getFirstName());
 	    	user.setLastName(userDto.getLastName());
+//	    	Permission userPsermission=new Permission();
+	    	//S//et<String> permissions = new HashSet(); 
+	    	List<Permission> allPermissions =new ArrayList(); 
+	    	for(String el : userDto.getPermissions()) {
+	    		Permission userPermission=new Permission();
+	    		userPermission.setName(el);
+	    		userPermission.setEmail(userDto.getEmail());
+	    		permissionRepo.save(userPermission);
+	    		allPermissions.add(userPermission);
+	    	}
+	    	user.setPermissions(allPermissions);
 	    	newUserOtpEmailDetails.setEmailLockoutUntil(null);
 	    	newUserOtpEmailDetails.setEmailsendAttempt(0);
 			userRepo.save(user);
-			emailOtpRepo.delete(newUserOtpEmailDetails);;
+
+			emailOtpRepo.delete(newUserOtpEmailDetails);
+
+
 			return new ServiceResponse<>(true, new UserDetails(user.getEmail(),user.getFirstName(),user.getLastName(),user.getAge()),null);
 	    }
 

@@ -32,11 +32,14 @@ public class LoginServiceImpl implements LoginService{
 		this.mailSender=mailSender;
 		this.emailOtpRepo=emailOtpRepo;
 	}
+	
 	@Override
 	public ServiceResponse<OtpDetails> loginUser(String email) {
+
 		User user= userRepo.findByEmail(email);
 		if(user==null) {
 			return new ServiceResponse(false,null,"Please sign up first");
+
 		}
 		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(email);
 		EmailOtp newUserOtpEmailDetails;

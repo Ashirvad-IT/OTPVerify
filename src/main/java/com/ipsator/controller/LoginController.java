@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class LoginController {
-	
+	 
 	private LoginService loginService;
 	
 	public LoginController(LoginService loginService) {

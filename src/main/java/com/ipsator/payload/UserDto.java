@@ -1,8 +1,12 @@
 package com.ipsator.payload;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-
+//import com.ipsator.Entity.Permission;
 import com.ipsator.Entity.User;
 
 import jakarta.persistence.Entity;
@@ -12,7 +16,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+ 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,6 +38,6 @@ public class UserDto {
     private LocalDateTime signUpTime;
     private int  emailSendAttempts;
     private LocalDateTime lastEmailsendtime;
-    
+    public List<String> permissions = new ArrayList<>(); 
    
 }

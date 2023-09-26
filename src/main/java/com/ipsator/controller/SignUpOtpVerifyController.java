@@ -24,7 +24,7 @@ import com.ipsator.service.SignUpOtpVerify;
 public class SignUpOtpVerifyController {
 
     private final SignUpOtpVerify otpService;
-
+ 
     @Autowired
     public SignUpOtpVerifyController(SignUpOtpVerify otpService) {
         this.otpService = otpService;

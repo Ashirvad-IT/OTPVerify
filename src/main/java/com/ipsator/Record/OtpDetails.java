@@ -8,3 +8,4 @@ import java.time.*;
 public record OtpDetails(String email,String otp) {
 
 }
+ 

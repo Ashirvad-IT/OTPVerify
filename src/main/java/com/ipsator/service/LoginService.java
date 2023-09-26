@@ -7,3 +7,4 @@ import com.ipsator.payload.UserDto;
 public interface LoginService {
 	public ServiceResponse<OtpDetails> loginUser(String email);
 }
+ 
