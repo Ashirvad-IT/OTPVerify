@@ -33,13 +33,13 @@ public class AppController {
 	public ResponseEntity<ApiResponse> createUser(@RequestBody UserRecord userRecord){
 		if(userRecord==null) {
 			//new ResponseEntity(new ApiResponse("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST)
-			return new ResponseEntity<ApiResponse>(new ApiResponse("Error",null,new Error("Please enter the details")),HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse("Error",null,new Error("Please enter the details")),HttpStatus.BAD_REQUEST);
 		}
 		ServiceResponse<UserRecord> result  = userService.createUser(userRecord);
 		if(result.isSuccess()) {
-			return new ResponseEntity<ApiResponse>(new ApiResponse<>("Success",result.getData(),null),HttpStatus.OK);
+			return new ResponseEntity<>(new ApiResponse<>("Success",result.getData(),null),HttpStatus.OK);
 		}else {
-			return new ResponseEntity<ApiResponse>(new ApiResponse<>("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse<>("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
 		}
 		
 	}

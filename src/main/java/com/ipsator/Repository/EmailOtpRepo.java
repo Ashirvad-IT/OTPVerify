@@ -10,5 +10,6 @@ import com.ipsator.Entity.EmailOtp;
 @Repository
 public interface EmailOtpRepo extends JpaRepository<EmailOtp, Integer>{
 	Optional<EmailOtp> findByEmail(String email);
+	Optional<EmailOtp> findByOtp(String otp);
 }
  

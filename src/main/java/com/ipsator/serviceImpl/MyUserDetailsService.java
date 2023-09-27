@@ -5,10 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import com.ipsator.Entity.EmailOtp;
 import com.ipsator.Entity.User;
-import com.ipsator.Repository.EmailOtpRepo;
 import com.ipsator.Repository.UserRepo;
 /**
  * Custom implementation of Spring Security's UserDetailsService interface.
@@ -18,9 +15,9 @@ import com.ipsator.Repository.UserRepo;
  * @see org.springframework.security.core.userdetails.UserDetailsService
  */
 @Component
-public class EmailOtpUserDetailsService implements UserDetailsService{
+public class MyUserDetailsService implements UserDetailsService{
 	
-	EmailOtpRepo emailOtpRepo;
+	UserRepo userRepo;
 	
 	 /**
      * Constructs a new CustomeUserDetailsService with the specified UserRepo dependency.
@@ -29,8 +26,8 @@ public class EmailOtpUserDetailsService implements UserDetailsService{
      */
 	
 	@Autowired
-	public EmailOtpUserDetailsService(EmailOtpRepo emailOtpRepo) {
-		this.emailOtpRepo=emailOtpRepo;
+	public MyUserDetailsService(UserRepo userRepo) {
+		this.userRepo=userRepo;
 	}
 	
 	/**
@@ -43,7 +40,7 @@ public class EmailOtpUserDetailsService implements UserDetailsService{
      */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		EmailOtp emailOtp=emailOtpRepo.findByEmail(username).get();
+		User emailOtp=userRepo.findByEmail(username);
 		if (emailOtp == null) {
 	        throw new UsernameNotFoundException("User not found with username: " + username);
 	    }
