@@ -1,13 +1,11 @@
 package com.ipsator.Entity;
 
-import com.ipsator.Entity.Permission;
+
 import java.time.LocalDateTime;
 import java.util.*;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,13 +34,10 @@ public class User implements UserDetails{
 	private Long id;
 	
 	@Email
-	@NotNull
 	private String email;
-
-	@NotNull
+	
 	private String firstName;
 	
-	@NotNull
 	private String lastName;
 	 
 	private int age;
@@ -50,6 +45,8 @@ public class User implements UserDetails{
 	private LocalDateTime createdTime;
 	
 	private LocalDateTime updatedDate;
+	
+	private boolean isLogIn;
 	
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	public Set<Permission> permissions = new HashSet<>();
@@ -61,7 +58,6 @@ public class User implements UserDetails{
             authorities.add(new SimpleGrantedAuthority(permission.getName()));
         }
         return authorities;
-//		return null;
 	}
 
 	@Override

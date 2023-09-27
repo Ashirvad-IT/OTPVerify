@@ -3,10 +3,8 @@ import com.ipsator.payload.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ipsator.Entity.Request;
 import com.ipsator.Entity.Response;
 import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.ServiceResponse;
@@ -22,8 +20,8 @@ public class LoginOtpVerifyController {
 	}
 	 
 	@PostMapping("/login/otp")
-	public ResponseEntity<ApiResponse> verifyLoginOtp(@RequestBody Request request){
-		ServiceResponse<Response> result=loginOtpVerifyService.verifyLogInOtp(request);
+	public ResponseEntity<ApiResponse> verifyLoginOtp(@RequestParam String otp){
+		ServiceResponse<Response> result=loginOtpVerifyService.verifyLogInOtp(otp);
 		 if(result.isSuccess()) {
 			 return new ResponseEntity<>(new ApiResponse("success",result.getData(),null),HttpStatus.OK);
 		 }

@@ -9,14 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
 import com.ipsator.Entity.EmailOtp;
-import com.ipsator.Entity.User;
 import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.EmailOtpRepo;
-import com.ipsator.Repository.UserRepo;
 import com.ipsator.payload.ServiceResponse;
-import com.ipsator.payload.UserDto;
 import com.ipsator.service.LoginService;
 
 @Service
@@ -24,11 +20,9 @@ public class LoginServiceImpl implements LoginService{
 	
 	@Value("${otp.expire.duration.minutes}")
  	private int otpExpireDuration;
-	private UserRepo userRepo;
 	private JavaMailSender mailSender;
 	private EmailOtpRepo emailOtpRepo;
-	public LoginServiceImpl(UserRepo userRepo, JavaMailSender mailSender, EmailOtpRepo emailOtpRepo) {
-		this.userRepo=userRepo;
+	public LoginServiceImpl(JavaMailSender mailSender, EmailOtpRepo emailOtpRepo) {
 		this.mailSender=mailSender;
 		this.emailOtpRepo=emailOtpRepo;
 	}
@@ -37,9 +31,6 @@ public class LoginServiceImpl implements LoginService{
 	public ServiceResponse<OtpDetails> loginUser(String email) {
 		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(email);
 		EmailOtp newUserOtpEmailDetails;
-		if(opt.isPresent() && opt.get().isLogIn()) {
-			return new ServiceResponse<>(false, null, "User already log in");
-		}
 		if(opt.isPresent() && opt.get().getEmailsendAttempt() >= 3) {
 			newUserOtpEmailDetails= opt.get();
 			newUserOtpEmailDetails.setEmailLockoutUntil(LocalDateTime.now().plusHours(otpExpireDuration));

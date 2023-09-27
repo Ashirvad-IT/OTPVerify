@@ -1,14 +1,8 @@
 package com.ipsator.payload;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-//import com.ipsator.Entity.Permission;
-import com.ipsator.Entity.User;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
