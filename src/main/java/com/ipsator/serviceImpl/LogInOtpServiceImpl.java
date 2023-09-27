@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ipsator.Entity.EmailOtp;
 import com.ipsator.Entity.Response;
 import com.ipsator.Entity.User;
+import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.EmailOtpRepo;
 import com.ipsator.Repository.UserRepo;
 import com.ipsator.Security.JwtHelper;
@@ -37,8 +38,9 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 	}
 	//otp-> otpExpireTime, otpLockoutTime, otpAttempts
 	@Override
-	public ServiceResponse<Response> verifyLogInOtp(String otp) {
-		Optional<EmailOtp> opt= emailOtpRepo.findByOtp(otp);
+	public ServiceResponse<Response> verifyLogInOtp(OtpDetails otpDetails) {
+		
+		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(otpDetails.email());
 		if(opt.isEmpty()) {
 			return new ServiceResponse<>(false,null,"Please generate otp first");
 		}
@@ -76,7 +78,7 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 			return new ServiceResponse<>(false,null,"You have reach maximum attempts");
 		}
 		// If the user is entering wrong otp then we will increase otp attempts.
-		if(!userEmailOtpDetails.getOtp().equals(otp)) {
+		if(!userEmailOtpDetails.getOtp().equals(otpDetails.otp())) {
 			userEmailOtpDetails.setOtpAttempts(userEmailOtpDetails.getOtpAttempts()+1);
 			emailOtpRepo.save(userEmailOtpDetails);
 			return new ServiceResponse<>(false,null,"Please enter correst otp");
