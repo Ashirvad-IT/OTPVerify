@@ -2,7 +2,10 @@ package com.ipsator.serviceImpl;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ipsator.Entity.Permission;
 import com.ipsator.Entity.User;
@@ -14,11 +17,13 @@ import com.ipsator.service.UserService;
 @Service
 public class UserServiceImpl implements UserService{
 	
-	UserRepo userRepo;
-	PermissionRepo permissionRepo;
+	private UserRepo userRepo;
+	private PermissionRepo permissionRepo;
 	
-	public UserServiceImpl(UserRepo userRepo) {
+	@Autowired
+	public UserServiceImpl(UserRepo userRepo,PermissionRepo permissionRepo) {
 		this.userRepo=userRepo;
+		this.permissionRepo=permissionRepo;
 	}
 	
 	@Override
@@ -26,7 +31,11 @@ public class UserServiceImpl implements UserService{
 		if(userRecord==null) {
 			return new ServiceResponse(false,null,"Please enter the details");
 		}
-		User user=new User();
+		User user= userRepo.findByEmail(userRecord.email());
+		if(user==null) {
+			return new ServiceResponse<>(false,null,"User not log in");
+		}
+		
 		user.setFirstName(userRecord.firstName());
     	user.setLastName(userRecord.lastName());
     	user.setEmail(userRecord.email());
@@ -34,7 +43,6 @@ public class UserServiceImpl implements UserService{
     	user.setCreatedTime(LocalDateTime.now()); 
     	Set<Permission> allPermissions =new HashSet<>(); 
     	for(String el : userRecord.permissions()) {
-    		System.out.println("*");
     		Permission userPermission=new Permission();
     		userPermission.setName(el);
     		userPermission.setEmail(userRecord.email());
