@@ -44,7 +44,7 @@ public class AppController {
 		
 	}
 	
-	@GetMapping("/sec")
+	@GetMapping()
 	@PreAuthorize("hasAuthority('User:Read')")
 	public ResponseEntity<String> secureEndpoint(){
 		return new ResponseEntity<String>("It is secure end point",HttpStatus.OK);

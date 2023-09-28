@@ -41,15 +41,17 @@ public class UserServiceImpl implements UserService{
     	user.setEmail(userRecord.email());
     	user.setAge(userRecord.age());
     	user.setCreatedTime(LocalDateTime.now()); 
-    	Set<Permission> allPermissions =new HashSet<>(); 
-    	for(String el : userRecord.permissions()) {
-    		Permission userPermission=new Permission();
-    		userPermission.setName(el);
-    		userPermission.setEmail(userRecord.email());
-    		permissionRepo.save(userPermission);
-    		allPermissions.add(userPermission);
+    	if(permissionRepo.findByEmail(userRecord.email())==null) {
+    		Set<Permission> allPermissions =new HashSet<>(); 
+        	for(String el : userRecord.permissions()) {
+        		Permission userPermission=new Permission();
+        		userPermission.setName(el);
+        		userPermission.setEmail(userRecord.email());
+        		permissionRepo.save(userPermission);
+        		allPermissions.add(userPermission);
+        	}
+        	user.setPermissions(allPermissions);
     	}
-    	user.setPermissions(allPermissions);
 		userRepo.save(user);
 		return new ServiceResponse<>(true,new UserRecord(userRecord.email(),userRecord.firstName(), userRecord.lastName(), userRecord.age(),null),"Profile got created");
 	}
