@@ -26,8 +26,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api","/api/**").authenticated()
-						.requestMatchers(HttpMethod.POST,"/api").hasAuthority("User:Write")
-						.requestMatchers("/login", "/register", "/signup/otp", "/login/otp","/api/user").permitAll().anyRequest()
+						.requestMatchers("/login", "/register", "/signup/otp", "/login/otp").permitAll().anyRequest()
 						.authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtauthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
