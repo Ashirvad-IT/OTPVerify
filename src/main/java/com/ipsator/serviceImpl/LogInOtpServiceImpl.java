@@ -61,7 +61,7 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		// Second condition can be user is trying to enter the otp within lockouttime
 		if(userEmailOtpDetails.getOtpLockoutUntil() != null) {
 			if(userEmailOtpDetails.getOtpLockoutUntil().isAfter(currentTime)) {
-				return new ServiceResponse<>(false,null,"User is lock unti "+ userEmailOtpDetails.getOtpLockoutUntil());
+				return new ServiceResponse<>(false,null,"User is lock until "+ userEmailOtpDetails.getOtpLockoutUntil());
 			}else {
 				userEmailOtpDetails.setOtpLockoutUntil(null);
 				emailOtpRepo.save(userEmailOtpDetails);
