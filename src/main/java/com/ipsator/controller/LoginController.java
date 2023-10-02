@@ -28,10 +28,7 @@ public class LoginController {
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse> login(@RequestParam String email){
 		ServiceResponse<OtpDetails> result=  loginService.loginUser(email);
-		if(result.isSuccess()) {
-			return new ResponseEntity<ApiResponse>(new ApiResponse("Success",result.getData(), null),HttpStatus.OK);
-		}
-		return new ResponseEntity(new ApiResponse("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
+		return result.getResponse();
 	}
 
 }
