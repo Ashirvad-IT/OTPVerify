@@ -24,9 +24,6 @@ public class LoginOtpVerifyController {
 	@PostMapping("/login/otp")
 	public ResponseEntity<ApiResponse> verifyLoginOtp(@RequestBody OtpDetails otpDetails){
 		ServiceResponse<Response> result=loginOtpVerifyService.verifyLogInOtp(otpDetails);
-		 if(result.isSuccess()) {
-			 return new ResponseEntity<>(new ApiResponse("success",result.getData(),null),HttpStatus.OK);
-		 }
-		return new ResponseEntity<>(new ApiResponse("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
+		return result.getResponse();
 	}
 }

@@ -16,11 +16,6 @@ import com.ipsator.payload.ApiResponse;
 import com.ipsator.payload.Error;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.UserService;
-import org.springframework.cloud.sleuth.annotation.NewSpan;
-import org.springframework.cloud.sleuth.annotation.SpanTag;
-//import org.springframework.cloud.sleuth.annotation.TraceContext;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @RestController
@@ -28,28 +23,11 @@ import org.slf4j.LoggerFactory;
 public class AppController {
 	
 	private final UserService userService;
-	private final Tracer tracer;
-	private final Logger log = LoggerFactory.getLogger(AppController.class);
 	
 	@Autowired
-	public AppController(UserService userService, Tracer tracer) {
+	public AppController(UserService userService) {
 		this.userService=userService;
-		this.tracer=tracer;
 	}
-	
-	@GetMapping("/trace-example")
-    @NewSpan
-    public String traceExample(@SpanTag("customTag") String customTagValue) {
-        Span currentSpan = this.tracer.currentSpan();
-        String traceId = currentSpan.context().traceId();
-
-        // Log the trace ID
-        log.info("Trace ID: {}", traceId);
-
-        // Rest of your controller logic
-
-        return "Trace example";
-    }
 	
 	@PostMapping("/user")
 	public ResponseEntity<ApiResponse> createUser(@RequestBody UserRecord userRecord){
@@ -58,12 +36,7 @@ public class AppController {
 			return new ResponseEntity<>(new ApiResponse("Error",null,new Error("Please enter the details")),HttpStatus.BAD_REQUEST);
 		}
 		ServiceResponse<UserRecord> result  = userService.createUser(userRecord);
-		if(result.isSuccess()) {
-			return new ResponseEntity<>(new ApiResponse<>("Success",result.getData(),null),HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(new ApiResponse<>("Error",null,new Error(result.getMessage())),HttpStatus.BAD_REQUEST);
-		}
-		
+		return result.getResponse();
 	}
 	
 	@GetMapping()
