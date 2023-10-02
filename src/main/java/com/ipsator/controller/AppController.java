@@ -28,28 +28,11 @@ import org.slf4j.LoggerFactory;
 public class AppController {
 	
 	private final UserService userService;
-	private final Tracer tracer;
-	private final Logger log = LoggerFactory.getLogger(AppController.class);
 	
 	@Autowired
-	public AppController(UserService userService, Tracer tracer) {
+	public AppController(UserService userService) {
 		this.userService=userService;
-		this.tracer=tracer;
 	}
-	
-	@GetMapping("/trace-example")
-    @NewSpan
-    public String traceExample(@SpanTag("customTag") String customTagValue) {
-        Span currentSpan = this.tracer.currentSpan();
-        String traceId = currentSpan.context().traceId();
-
-        // Log the trace ID
-        log.info("Trace ID: {}", traceId);
-
-        // Rest of your controller logic
-
-        return "Trace example";
-    }
 	
 	@PostMapping("/user")
 	public ResponseEntity<ApiResponse> createUser(@RequestBody UserRecord userRecord){
