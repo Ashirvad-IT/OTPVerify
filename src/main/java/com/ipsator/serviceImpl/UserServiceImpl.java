@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService{
     	user.setEmail(userRecord.email());
     	user.setAge(userRecord.age());
     	user.setCreatedTime(LocalDateTime.now()); 
-    	if(permissionRepo.findByEmail(userRecord.email())==null) {
+    	if(permissionRepo.findByEmail(userRecord.email()).size()==0) {
     		Set<Permission> allPermissions =new HashSet<>(); 
         	for(String el : userRecord.permissions()) {
         		Permission userPermission=new Permission();

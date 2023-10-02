@@ -81,7 +81,7 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		if(!userEmailOtpDetails.getOtp().equals(otpDetails.otp())) {
 			userEmailOtpDetails.setOtpAttempts(userEmailOtpDetails.getOtpAttempts()+1);
 			emailOtpRepo.save(userEmailOtpDetails);
-			return new ServiceResponse<>(false,null,"Please enter correst otp");
+			return new ServiceResponse<>(false,null,"Please enter correct details");
 		}		
 		// Here we are checking otp is expire or not
 		if(userEmailOtpDetails.getOtpExpireTime() != null && currentTime.isAfter(userEmailOtpDetails.getOtpExpireTime())) {
