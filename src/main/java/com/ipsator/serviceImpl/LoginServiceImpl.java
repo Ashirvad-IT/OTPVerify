@@ -14,7 +14,10 @@ import com.ipsator.Record.OtpDetails;
 import com.ipsator.Repository.EmailOtpRepo;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LoginService;
-
+/**
+ * This class implements the LoginService interface and provides methods for user login which
+ * including sending one time password on email.
+ */
 @Service
 public class LoginServiceImpl implements LoginService{
 	
@@ -26,7 +29,12 @@ public class LoginServiceImpl implements LoginService{
 		this.mailSender=mailSender;
 		this.emailOtpRepo=emailOtpRepo;
 	}
-	
+	 /**
+     * Attempts to initiate the login process by sending an OTP to the specified email address.
+     *
+     * @param email The email address of the user attempting to log in.
+     * @return ServiceResponse<otpDetails> indicating the success or failure of sending the OTP.
+     */
 	@Override
 	public ServiceResponse<OtpDetails> loginUser(String email) {
 		Optional<EmailOtp> opt= emailOtpRepo.findByEmail(email);
@@ -70,6 +78,12 @@ public class LoginServiceImpl implements LoginService{
 		emailOtpRepo.save(newUserOtpEmailDetails);
     	return new ServiceResponse(true, new OtpDetails(email,otp),"Otp send successfully");
 	}
+	/**
+     * Sends an OTP (One-Time Password) to the specified email address.
+     *
+     * @param email The email address to which the OTP is sent.
+     * @param otp   The OTP code to be sent in the email.
+     */
 	private void sendOtpByEmail(String email,String otp) {
 		SimpleMailMessage message= new SimpleMailMessage();
 		message.setTo(email);
