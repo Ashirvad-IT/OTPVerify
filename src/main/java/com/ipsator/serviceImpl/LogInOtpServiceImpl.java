@@ -18,7 +18,11 @@ import com.ipsator.Security.JwtHelper;
 import com.ipsator.payload.ServiceResponse;
 import com.ipsator.service.LoginOtpVerifyService;
 
-
+/**
+ * This class implements the LoginOtpVerifyService interface and provides
+ * methods for verifying login OTP (One-Time Password) for user authentication.
+ * It manages OTP validation, user lockout, and JWT token generation.
+ */
 @Service
 public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 	
@@ -36,7 +40,12 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		this.emailOtpRepo=emailOtpRepo;
 		this.userDetailsService=userDetailsService;
 	}
-	//otp-> otpExpireTime, otpLockoutTime, otpAttempts
+	/**
+	 * Verifies the login OTP provided by the user and returns the appropriate response.
+	 *
+	 * @param otpDetails The OTP details including email and OTP value.
+	 * @return ServiceResponse<Response> indicating the success or failure of the OTP verification.
+	 */
 	@Override
 	public ServiceResponse<Response> verifyLogInOtp(OtpDetails otpDetails) {
 		
@@ -86,8 +95,7 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		// Here we are checking otp is expire or not
 		if(userEmailOtpDetails.getOtpExpireTime() != null && currentTime.isAfter(userEmailOtpDetails.getOtpExpireTime())) {
 			return new ServiceResponse<>(false, null, "Otp is expired");
-		}	
-		
+		}			
 		//JWT token
 		UserDetails userDetails= userDetailsService.loadUserByUsername(email);
 		String token= jwtHelper.generateToken(userDetails);		
@@ -97,6 +105,4 @@ public class LogInOtpServiceImpl implements LoginOtpVerifyService{
 		return new ServiceResponse<>(true,jwtResponse,"Login success");
 	}
 	
-	
-
 }

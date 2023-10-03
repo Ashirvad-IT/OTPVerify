@@ -45,7 +45,7 @@ public class AppController {
 		return new ResponseEntity<String>("It is secure end point",HttpStatus.OK);
 	}
 	 
-	@PostMapping()
+	@PostMapping("/create")
 	@PreAuthorize("hasAuthority('User:Write')")
 	public ResponseEntity<String> createResource(){
 		return new ResponseEntity<String>("Resource got created",HttpStatus.CREATED);
